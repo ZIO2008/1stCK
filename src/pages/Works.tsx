@@ -1,0 +1,100 @@
+import { useState, useMemo } from 'react';
+import { useWorks } from '@/context/WorksContext';
+import type { WorkType } from '@/types';
+import FilterBar from '@/components/FilterBar';
+import WorkCard from '@/components/WorkCard';
+
+export default function Works() {
+  const { works } = useWorks();
+  const [activeType, setActiveType] = useState<WorkType | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredWorks = useMemo(() => {
+    let result = works;
+
+    if (activeType) {
+      result = result.filter((w) => w.type === activeType);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (w) =>
+          w.title.toLowerCase().includes(q) ||
+          w.description.toLowerCase().includes(q) ||
+          w.tags.some((t) => t.toLowerCase().includes(q)) ||
+          w.client?.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [activeType, searchQuery]);
+
+  return (
+    <div className="min-h-screen pt-24 pb-32">
+      <div className="max-w-[1200px] mx-auto px-6">
+        {/* 页头 */}
+        <div className="mb-16">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-mist-900 tracking-tight mb-4">
+            作品
+          </h1>
+          <p className="text-mist-500 text-base max-w-md">
+            从商业委托到个人创作，每一部都是通往更高处的路标。
+          </p>
+        </div>
+
+        {/* 筛选 + 搜索 */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-12">
+          <div className="flex-1">
+            <FilterBar activeType={activeType} onTypeChange={setActiveType} />
+          </div>
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="搜索作品..."
+              className="w-full px-4 py-2.5 text-sm bg-mist-50 border border-mist-200 rounded-full focus:outline-none focus:border-mist-400 focus:bg-white transition-colors"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-mist-400 hover:text-mist-600"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 作品网格 */}
+        {filteredWorks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredWorks.map((work, i) => (
+              <div
+                key={work.id}
+                className="animate-fade-in"
+                style={{ animationDelay: `${i * 60}ms` }}
+              >
+                <WorkCard work={work} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-24">
+            <p className="text-mist-400 text-lg font-serif">没有找到匹配的作品</p>
+            <button
+              onClick={() => {
+                setActiveType(null);
+                setSearchQuery('');
+              }}
+              className="mt-4 text-sm text-lens-600 hover:text-lens-700 transition-colors"
+            >
+              清除筛选条件
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
