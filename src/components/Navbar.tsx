@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Mountain, Grid3X3, User, Menu, X, Lock, Eye, EyeOff, LogIn, ArrowLeft, Film } from 'lucide-react';
+import { Mountain, Camera, User, Menu, X, Lock, Eye, EyeOff, LogIn, ArrowLeft, Film } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { setAdminAuth, isAdminAuthed } from '@/pages/AdminLogin';
@@ -8,8 +8,8 @@ const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'dsl2024';
 
 const navLinks = [
-  { to: '/works', label: '作品', icon: Grid3X3 },
-  { to: '/video', label: '影像', icon: Film },
+  { to: '/works', label: '照片', icon: Camera },
+  { to: '/video', label: '视频', icon: Film },
   { to: '/about', label: '关于', icon: User },
 ];
 
@@ -154,6 +154,14 @@ export default function Navbar() {
   // 作品详情页（有封面大图，导航栏透明但需要返回按钮）
   const isWorkDetail = location.pathname.startsWith('/work/') && location.pathname !== '/works';
 
+  // 智能返回：从 ?from= 参数判断来源页面
+  const backTo = (() => {
+    const params = new URLSearchParams(location.search);
+    const from = params.get('from');
+    if (from === 'video') return '/video';
+    return '/works'; // 默认回照片页
+  })();
+
   // 实际使用深色样式的条件：已滚动 OR 强制深色（无顶图页面）
   const useDark = scrolled || forceDark;
 
@@ -196,7 +204,7 @@ export default function Navbar() {
             {/* 作品详情页返回按钮 — 放在 Navbar 内避免被 fixed 层遮挡 */}
             {isWorkDetail && (
               <button
-                onClick={() => navigate('/works')}
+                onClick={() => navigate(backTo)}
                 className={cn(
                   'flex items-center gap-1.5 mr-3 py-1.5 rounded-lg text-sm transition-colors',
                   useDark

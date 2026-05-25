@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, X, Layers, Film } from 'lucide-react';
+import { Search, X, Film } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP, type WorkType } from '@/types';
+import WorkCard from '@/components/WorkCard';
 import { cn } from '@/lib/utils';
 
 /* ─── 常量 ─────────────────────────────────────────── */
@@ -26,17 +26,14 @@ export default function Video() {
   const filteredWorks = useMemo(() => {
     let result = works;
 
-    // 方向筛选
     if (orientation !== 'all') {
       result = result.filter((w) => w.orientation === orientation);
     }
 
-    // 类型筛选
     if (activeType !== 'all') {
       result = result.filter((w) => w.type === activeType);
     }
 
-    // 搜索
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter(
@@ -68,7 +65,7 @@ export default function Video() {
       <div className="max-w-[1440px] mx-auto px-6 pt-28 pb-8">
         <div className="flex items-center gap-3 mb-2">
           <Film className="w-7 h-7 text-stone-800" />
-          <h1 className="text-3xl font-light tracking-wide text-stone-900">影像</h1>
+          <h1 className="text-3xl font-light tracking-wide text-stone-900">视频</h1>
         </div>
         <p className="text-stone-400 text-sm tracking-wide">
           每一帧都是时间的切片
@@ -85,7 +82,7 @@ export default function Video() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="搜索作品名称、描述、标签..."
+              placeholder="搜索作品名称、描述、标签……"
               className="w-full pl-10 pr-10 py-2.5 bg-stone-50 border border-stone-100 rounded-lg text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-stone-300 focus:bg-white transition-colors"
             />
             {search && (
@@ -100,7 +97,6 @@ export default function Video() {
 
           {/* 方向 + 类型 */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* 方向筛选项 */}
             <span className="text-xs text-stone-400 mr-1">方向</span>
             {ORIENTATION_OPTIONS.map((opt) => (
               <button
@@ -119,7 +115,6 @@ export default function Video() {
 
             <span className="w-px h-5 bg-stone-200 mx-2" />
 
-            {/* 类型筛选项 */}
             <span className="text-xs text-stone-400 mr-1">类型</span>
             <button
               onClick={() => setActiveType('all')}
@@ -173,80 +168,13 @@ export default function Video() {
         ) : (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 [column-fill:_balance]">
             {filteredWorks.map((work, i) => (
-              <Link
+              <div
                 key={work.id}
-                to={`/work/${work.id}`}
-                className="block break-inside-avoid mb-5 group cursor-pointer"
+                className="mb-5"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
-                {/* 图片容器 */}
-                <div
-                  className={cn(
-                    'relative overflow-hidden rounded-xl bg-stone-100',
-                    work.orientation === 'portrait'
-                      ? 'aspect-[3/4]'
-                      : 'aspect-[16/9]',
-                  )}
-                >
-                  <img
-                    src={work.coverImage}
-                    alt={work.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-
-                  {/* 组图标识 */}
-                  {work.isGroup && (
-                    <span className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/50 backdrop-blur-sm rounded-md text-white text-[10px] font-medium">
-                      <Layers className="w-3 h-3" />
-                      组图
-                    </span>
-                  )}
-
-                  {/* Hover 渐变遮罩 */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Hover 文字信息 */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <p className="text-white text-sm font-medium leading-snug">
-                      {work.title}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-white/70 text-xs">
-                        {work.year || work.date.slice(0, 4)}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-white/40" />
-                      <span className="text-white/70 text-xs">
-                        {WORK_TYPE_MAP[work.type].label}
-                      </span>
-                      {work.duration && (
-                        <>
-                          <span className="w-1 h-1 rounded-full bg-white/40" />
-                          <span className="text-white/70 text-xs">
-                            {work.duration}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* 卡片底部信息（非hover时可见） */}
-                <div className="mt-2.5 px-0.5">
-                  <p className="text-sm text-stone-700 font-medium truncate group-hover:text-stone-900 transition-colors">
-                    {work.title}
-                  </p>
-                  <p className="text-xs text-stone-400 mt-0.5">
-                    {WORK_TYPE_MAP[work.type].label} · {work.year || work.date.slice(0, 4)}
-                    {work.isGroup && (
-                      <span className="inline-flex items-center ml-1.5 text-stone-300">
-                        <Layers className="w-3 h-3 mr-0.5" />
-                        组图
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </Link>
+                <WorkCard work={work} from="video" />
+              </div>
             ))}
           </div>
         )}
@@ -257,7 +185,8 @@ export default function Video() {
             共 {filteredWorks.length} 件作品
             {orientation !== 'all' &&
               ` · ${ORIENTATION_OPTIONS.find((o) => o.value === orientation)?.label}`}
-            {activeType !== 'all' && ` · ${WORK_TYPE_MAP[activeType as WorkType]?.label}`}
+            {activeType !== 'all' &&
+              ` · ${WORK_TYPE_MAP[activeType as WorkType]?.label}`}
             {search && ` · "${search}"`}
           </p>
         </div>
