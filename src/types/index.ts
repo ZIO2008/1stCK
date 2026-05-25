@@ -65,6 +65,17 @@ export interface Work {
   photoCoverImage?: string;
   /** 标记该作品属于照片类别（照片页独立展示，不含视频） */
   hasPhoto?: boolean;
+  /** 拍摄地点，如 "重庆·洪崖洞" */
+  location?: string;
+  /** 摄影 EXIF 参数（仅照片） */
+  exif?: {
+    camera?: string;      // 机身
+    lens?: string;        // 镜头
+    aperture?: string;    // 光圈
+    shutter?: string;     // 快门
+    iso?: string;         // ISO
+    focalLength?: string; // 焦距
+  };
 }
 
 /* ---- Tag ---- */

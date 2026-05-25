@@ -20,6 +20,9 @@ export const tags: Tag[] = [
   { name: '黑白', slug: 'bw', color: 'mist', count: 1, description: '黑白影像' },
   { name: '纪实', slug: 'reportage', color: 'summit', count: 3, description: '真实记录' },
   { name: '光影', slug: 'light-shadow', color: 'orange', count: 1, description: '光与影的游戏' },
+  { name: '建筑', slug: 'architecture', color: 'mist', count: 1, description: '结构与空间的诗学' },
+  { name: '微距', slug: 'macro', color: 'rose', count: 1, description: '近一点，再近一点' },
+  { name: '自然', slug: 'nature', color: 'summit', count: 1, description: '草木有灵' },
 ];
 
 /**
@@ -841,6 +844,15 @@ export const works: Work[] = [
     subject: '城市夜景',
     gear: '徕卡 M10-P + 35mm F2 Summicron',
     orientation: 'portrait',
+    location: '重庆·洪崖洞',
+    exif: {
+      camera: '徕卡 M10-P',
+      lens: '35mm F2 Summicron ASPH',
+      aperture: 'f/2.8',
+      shutter: '1/15',
+      iso: '3200',
+      focalLength: '35mm',
+    },
     story: {
       background:
         '洪崖洞是重庆最具辨识度的城市名片。但每年数以千万计的游客拍下的洪崖洞几乎一模一样——都是站在千厮门大桥上用手机拍的正面全景。\n\n' +
@@ -882,6 +894,15 @@ export const works: Work[] = [
     subject: '人文纪实',
     gear: '徕卡 M Monochrom + 50mm F1.4',
     orientation: 'portrait',
+    location: '成都·彭镇老茶馆',
+    exif: {
+      camera: '徕卡 M Monochrom (Typ 246)',
+      lens: '50mm F1.4 Summilux ASPH',
+      aperture: 'f/4',
+      shutter: '1/125',
+      iso: '1600',
+      focalLength: '50mm',
+    },
     story: {
       background:
         '彭镇老茶馆是成都现存最老的茶馆之一，据说已有上百年历史。老虎灶、竹编椅、盖碗茶、墙上发黄的毛主席画像——这些元素构成了一幅几乎被现代化遗忘的画面。\n\n' +
@@ -909,41 +930,51 @@ export const works: Work[] = [
 
   // ── 单图 3/4 ─────────────────────────────────────────────
   {
-    id: 'tibetan-kids',
-    title: '追光者',
-    subtitle: '甘南草原上的童年',
-    description: '三个孩子在海拔3500米的草原上奔跑，追逐的不是什么，就是跑本身。',
-    coverImage: '/images/photo-cover-kids.png',
-    photoCoverImage: '/images/photo-cover-kids.png',
+    id: 'geometry-revelations',
+    title: '几何默示录',
+    subtitle: '光与混凝土的对话',
+    description: '建筑不说话，但它用光写诗。每一道阴影都是一行，每一扇窗都是一句。',
+    coverImage: '/images/photo-cover-geometry.png',
+    photoCoverImage: '/images/photo-cover-geometry.png',
     hasPhoto: true,
-    type: 'travel',
-    tags: ['人文', '旅行', '纪实'],
+    type: 'creative',
+    tags: ['建筑', '光影', '黑白'],
     date: '2025-07-28',
     year: '2025',
-    subject: '人文纪实',
-    gear: '哈苏 X2D + 90mm F3.2',
+    subject: '抽象建筑',
+    gear: '徕卡 M10-P + 50mm F2 APO',
     orientation: 'landscape',
+    location: '深圳·当代艺术与城市规划馆',
+    exif: {
+      camera: '徕卡 M10-P',
+      lens: '50mm F2 APO-Summicron',
+      aperture: 'f/8',
+      shutter: '1/250',
+      iso: '200',
+      focalLength: '50mm',
+    },
     story: {
       background:
-        '2025年夏天，我在甘南草原拍摄一个旅行项目。拍摄间隙，我注意到三个藏区孩子在营地外奔跑——没有玩具，没有目的地，就是单纯地跑。夕阳把他们的影子拉得很长，草尖在风中泛起银白色的波浪。\n\n' +
-        '那个画面太不刻意了——它不是一个"摄影作品"，而是草原上每天都会发生的事情。但正是这种日常，让我放下了手里的项目相机，拿起旁轴相机跟了上去。',
+        '深圳当代艺术馆的建筑本身就是一件雕塑。蓝天组（Coop Himmelb(l)au）设计的这座建筑没有一面墙是正交的——所有的面都在倾斜、扭转、穿插。晴天下午两点，阳光透过中庭的钢结构天窗洒进来，在倾斜的混凝土墙面上投下锐利的光影网格。\n\n' +
+        '我在这座建筑里走了三个小时。不是为了看展，是为了看光。',
       thinking:
-        '拍孩子的最高难度在于：你越让他们"自然点"，他们就越不自然。我没有让他们"再来一次"或者"不要看镜头"——我直接加入了他们的游戏。\n\n' +
-        '我蹲在草里，假装在找虫子，然后趁他们从我身边跑过去的时候按快门。只拍了一卷（约30张），但每一张都是真实发生的瞬间，没有一张是"准备—1、2、3"的摆拍。\n\n' +
-        '90mm中长焦给了我观察者的距离——不打扰，又能把远处雪山的逆光轮廓收进画面。配合哈苏的16bit色彩，草地的绿色层次和天空的渐变都保留了极丰富的细节。',
+        '建筑摄影通常有两种：房地产摄影（"这个大厅多气派"）和旅游打卡（"来过这里"）。我想拍第三种——把建筑还原为纯粹的几何与光影，剥离所有功能和地点信息。\n\n' +
+        '黑白是必然选择——去掉颜色后，剩下的只有形状、线条、质感和光的梯度。我用50mm标准镜头而非广角——广角会让透视变形变成主角，而我要的是平面上几何关系的精确对位。\n\n' +
+        '参考了贝歇夫妇（Bernd & Hilla Becher）的类型学摄影和杉本博司的建筑模糊系列——不是记录一栋建筑，而是提炼一种形式。',
       process:
-        '下午六点半，金色时刻。孩子们本来在帐篷外面玩石子，然后不知道谁喊了一声什么（我没听懂藏语），三个孩子突然一起往山坡上跑。\n\n' +
-        '我本能地举起相机。取景器里，三个小小的身影在金色光线下逆光奔跑，远处的阿尼玛卿雪山若隐若现。最前面那个孩子回头看了一下同伴，头发被风掀起来——那一格画面在后来的选片里被所有同行一致认为是"年度最佳"。\n\n' +
-        '跑出去500米后，他们停下来，弯腰喘气，然后互相看着大笑。我没有追上去拍——有些瞬间是属于他们自己的，和我的快门无关。',
+        '下午两点到五点，我一直待在同一个中庭里。阳光的角度在不断变化——两点的时候光斑落在西墙上，三点移到地板，四点半已经爬到了东侧的旋转楼梯上。\n\n' +
+        '我在等的不是"最美的时刻"，而是几何关系最精确的那一刻——当一束光刚好穿过天窗的菱形格栅，在地面上投下一个完美的菱形，而这个菱形又刚好被一根倾斜的柱子切成两个等大的三角形。\n\n' +
+        '这一刻发生在下午3:47。持续了大约90秒，然后太阳角度变了，菱形成了平行四边形。90秒，一张照片。',
       result:
-        '这张奔跑的照片后来被我用在了自己的作品集封面。不是因为构图多完美、色彩多好看，而是因为每次看到它，都会想起那十分钟——当世界上所有事情都停下来，只有三个孩子和一片黄昏。',
+        '这张照片后来被一家建筑杂志用作了封面。主编写邮件说："它不像一张建筑照片。它像一幅抽象画——但你知道它是真实的。"\n\n' +
+        '我回信说：对，建筑摄影的最高境界不是"拍得像效果图"，而是"拍得让人忘记这是建筑"。',
     },
     credits: [
       { role: '摄影 / 后期', name: '登山路' },
     ],
     processImages: [
-      '/images/process-kids-1.png',
-      '/images/process-kids-2.png',
+      '/images/process-geometry-1.png',
+      '/images/process-geometry-2.png',
     ],
   },
 
@@ -963,6 +994,15 @@ export const works: Work[] = [
     subject: '城市建筑',
     gear: '徕卡 Q2 + 28mm F1.7',
     orientation: 'landscape',
+    location: '上海·陆家嘴',
+    exif: {
+      camera: '徕卡 Q2',
+      lens: '28mm F1.7 Summilux',
+      aperture: 'f/5.6',
+      shutter: '1/60',
+      iso: '400',
+      focalLength: '28mm',
+    },
     story: {
       background:
         '上海陆家嘴是全世界被拍得最多的天际线之一。金茂大厦、环球金融中心、上海中心大厦——三件套的合影已经在社交媒体上出现过几百万次。\n\n' +
@@ -988,56 +1028,63 @@ export const works: Work[] = [
     ],
   },
 
-  // ── 组图 1/2 — 若尔盖的清晨 ──────────────────────────────
+  // ── 组图 1/2 — 花间集 ──────────────────────────────────
   {
-    id: 'ruoergai-morning',
-    title: '若尔盖的清晨',
-    subtitle: '海拔3500米的日常',
-    description: '天还没亮，卓玛已经在挤奶了。帐篷外是380万亩草原，但她的世界只有身边那二十头牦牛。',
-    coverImage: '/images/photo-cover-ruoergai.png',
-    photoCoverImage: '/images/photo-cover-ruoergai.png',
+    id: 'among-flowers',
+    title: '花间集',
+    subtitle: '四朵花的四张肖像',
+    description: '把镜头凑近一点，再近一点。你会发现一朵花就是一个宇宙——它有结构、有纹理、有它自己的晨昏。',
+    coverImage: '/images/photo-cover-flowers.png',
+    photoCoverImage: '/images/photo-cover-flowers.png',
     hasPhoto: true,
-    type: 'documentary',
-    tags: ['纪实', '人文', '旅行'],
+    type: 'creative',
+    tags: ['微距', '自然', '光影'],
     date: '2025-08-15',
     year: '2025',
-    subject: '纪实组图',
-    gear: '徕卡 SL2 + 24-90mm F2.8-4',
+    subject: '微距组图',
+    gear: '哈苏 X2D + 120mm F4 Macro',
     orientation: 'landscape',
+    location: '广州·华南植物园',
+    exif: {
+      camera: '哈苏 X2D 100C',
+      lens: '120mm F4 Macro',
+      aperture: 'f/5.6',
+      shutter: '1/500',
+      iso: '400',
+      focalLength: '120mm',
+    },
     isGroup: true,
     stills: [
-      '/images/photo-still-ruoergai-1.png',
-      '/images/photo-still-ruoergai-2.png',
-      '/images/photo-still-ruoergai-3.png',
-      '/images/photo-still-ruoergai-4.png',
+      '/images/photo-still-flowers-1.png',
+      '/images/photo-still-flowers-2.png',
+      '/images/photo-still-flowers-3.png',
+      '/images/photo-still-flowers-4.png',
     ],
     story: {
       background:
-        '若尔盖草原是中国最大的高原湿地之一，海拔3400-3800米，面积约5.3万平方公里。这里生活着大量的藏族牧民，他们的日常和三百年前没有本质区别——放牧、挤奶、打酥油、烧牛粪。\n\n' +
-        '我是因为拍摄风光项目而进入这片草原的，但真正让我留下来的不是风景，而是牧民卓玛一家。卓玛今年四十二岁，一个人带着两个孩子，管着二十头牦牛。她的丈夫在县城打工，一年回来两次。',
+        '我一直觉得花卉摄影是最被低估的类型。它常被贴上"糖水片"的标签——但在最好的花卉摄影中，一朵花可以拥有肖像画的分量和尊严。\n\n' +
+        'Robert Mapplethorpe的花卉系列是我这次拍摄的起点。他用拍人的方式拍花——同样的光线、同样的构图、同样的尊重。一朵兰花在他镜头下可以是一尊雕塑，一枝马蹄莲可以是一段舞蹈。我想用哈苏中画幅的解析力，把四朵不同的花拍成四幅不同的肖像。',
       thinking:
-        '组图的力量在于叙事——不是一张照片讲完一个故事，而是用一系列连续的影像构建一个完整的空间和时间的切片。\n\n' +
-        '我决定从凌晨五点开始跟拍，用四个关键时间点构建若尔盖清晨的完整叙事：\n' +
-        '— 5:00 挤奶：牦牛群还半梦半醒，卓玛蹲在牛肚下，双手有节奏地拉动。画面暗但暖——炉火的光映在她的侧脸上\n' +
-        '— 6:30 生火：天刚亮，帐篷外的草地上起了薄霜。卓玛在露天灶台前弯腰吹火，烟雾和晨雾混在一起\n' +
-        '— 7:30 放牧：太阳完全升起，卓玛骑在马背上赶牛群往远处的草场走去。逆光，人和牛都变成了剪影\n' +
-        '— 8:30 早餐：回到帐篷，酥油茶和糌粑。最小的孩子睡醒了，靠在卓玛腿上\n\n' +
-        '这四张照片放在一起，不只是一天的时间线，更是一个女人日复一日的生活结构。',
+        '组图的构思基于"四种光线下四种花的四种性格"：\n' +
+        '— 晨光（6:30）：带露水的白玫瑰。柔和的漫射光，低饱和，像一幅水彩\n' +
+        '— 正午（12:00）：盛放的向日葵。强光从正上方打下，明暗对比强烈，像一尊雕塑\n' +
+        '— 雨后（15:00）：挂着水珠的蓝色绣球。漫反射的天空光，通透，像一块宝石\n' +
+        '— 逆光（17:30）：金色的狗尾草。夕阳从背后穿透绒毛，每一根都发光，像一场毛茸茸的日落\n\n' +
+        '四张放在一起，不是四朵花，而是一天里四种光的性格。',
       process:
-        '在卓玛家的帐篷旁边搭了我的小帐篷，住了三天。第一天她不太习惯有相机跟着，动作有些僵硬。第二天开始，她已经完全忽略了我的存在——该骂牦牛骂牦牛，该吼孩子吼孩子。\n\n' +
-        '挤奶的那张最难拍——帐篷里很暗，只有一盏酥油灯和一扇巴掌大的天窗。ISO推到了6400，用SL2的机身防抖硬扛了1/15秒的快门。卓玛的手在动（挤奶不能停），所以焦点实在地落在了她的脸上——那张在黑暗中微微反着汗光的脸。\n\n' +
-        '最后一天离开的时候，卓玛给我装了一袋酥油——"路上吃，高反的时候喝酥油茶好。"照片里的卓玛是沉默的、坚硬的，但把酥油塞进我背包的卓玛是笑着的。',
+        '120mm微距镜头的最浅景深只有几毫米。这意味着在一朵五厘米宽的玫瑰花里，只有花瓣的前缘是实的，花心已经虚了。对焦变成了构图的一部分——你选择让哪里清晰，就等于选择了观众先看到什么。\n\n' +
+        '最大挑战是风。植物园里任何一阵微风都会让花移动——而在120mm微距、F5.6的景深里，哪怕移动一毫米都会失焦。等风停成了这次拍摄最重要的"技术"。\n\n' +
+        '向日葵那张反而是最容易的——花盘够大、够平坦，F8下整个花盘都在焦点内。真正的挑战是在后期：哈苏中画幅的16bit色彩保留了花瓣上几乎所有的高光细节，但如何在保持质感的同时让向日葵的黄色"亮而不溢"花了我一个下午。',
       result:
-        '四张组图发布后，被一个藏区公益组织联系——问能不能用其中一张做项目的封面。我同意了。\n\n' +
-        '后来他们告诉我，那张挤奶的照片让一个捐助人决定资助若尔盖草原的妇女手工合作社——不是因为"同情"，而是因为照片里的卓玛"看起来不像需要被可怜的"。\n\n' +
-        '那一刻我知道这组照片做对了一件事：它没有把牧民拍成"远方的风景"，而是拍成了"此刻正在生活的人"。',
+        '四张照片发布后，一个日本的花道老师在评论区写了一段话：いけばなとは、花を通して自分を見ることです（花道是通过花看见自己）。\n\n' +
+        '我不懂花道，但拍完这组照片后，我开始理解她的意思——当你花了二十分钟等一阵风停，只为拍一朵花的时候，你的耐心和这朵花的安静之间就有了某种连接。那种连接就是影像能传达的、言语之外的东西。',
     },
     credits: [
-      { role: '摄影 / 后期 / 文字', name: '登山路' },
+      { role: '摄影 / 后期', name: '登山路' },
     ],
     processImages: [
-      '/images/process-ruoergai-1.png',
-      '/images/process-ruoergai-2.png',
+      '/images/process-flowers-1.png',
+      '/images/process-flowers-2.png',
     ],
   },
 
@@ -1057,6 +1104,15 @@ export const works: Work[] = [
     subject: '风光组图',
     gear: '大疆 Mavic 3 Pro + 哈苏 X2D',
     orientation: 'landscape',
+    location: '福建·霞浦',
+    exif: {
+      camera: '大疆 Mavic 3 Pro (Hasselblad)',
+      lens: '24mm F2.8 (等效)',
+      aperture: 'f/4',
+      shutter: '1/500',
+      iso: '100',
+      focalLength: '24mm',
+    },
     isGroup: true,
     stills: [
       '/images/photo-still-xiapu-1.png',
