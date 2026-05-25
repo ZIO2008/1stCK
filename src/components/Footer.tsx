@@ -31,23 +31,23 @@ function XiaohongshuIcon({ className }: { className?: string }) {
   );
 }
 
-// TODO: 替换为你真实的主页链接
+// 暂用平台主页，账号完善后替换为个人主页链接
 const socialLinks = [
   {
     label: '小红书',
-    href: 'https://www.xiaohongshu.com/user/profile/YOUR_ID',
+    href: 'https://www.xiaohongshu.com',
     Icon: XiaohongshuIcon,
     hoverColor: 'hover:text-rose-500',
   },
   {
     label: '抖音',
-    href: 'https://www.douyin.com/user/YOUR_ID',
+    href: 'https://www.douyin.com',
     Icon: DouyinIcon,
     hoverColor: 'hover:text-mist-900',
   },
   {
     label: 'B站',
-    href: 'https://space.bilibili.com/YOUR_UID',
+    href: 'https://www.bilibili.com',
     Icon: BilibiliIcon,
     hoverColor: 'hover:text-sky-500',
   },
