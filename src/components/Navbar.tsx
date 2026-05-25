@@ -201,7 +201,7 @@ export default function Navbar() {
               useDark ? 'h-14' : 'h-16'
             )}
           >
-            {/* Logo */}
+            {/* Logo + 返回按钮 */}
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-summit-500 to-lens-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
                 <Mountain className="w-4 h-4 text-white" />
@@ -215,13 +215,11 @@ export default function Navbar() {
                 登山路
               </span>
             </Link>
-
-            {/* 作品详情页返回按钮 — 位于 Logo 右侧 */}
             {isWorkDetail && (
               <button
                 onClick={() => navigate(backTo)}
                 className={cn(
-                  'flex items-center gap-1.5 ml-1 py-1.5 px-2 rounded-lg text-sm transition-colors',
+                  'flex items-center gap-1.5 py-1.5 px-2 rounded-lg text-sm transition-colors',
                   useDark
                     ? 'text-mist-400 hover:text-mist-700 hover:bg-mist-50'
                     : 'text-white/60 hover:text-white hover:bg-white/10'

@@ -99,7 +99,7 @@ export default function Home() {
                 to="/video"
                 className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
               >
-                查看全部视频 →
+                查看更多 →
               </Link>
             </div>
 
@@ -136,7 +136,7 @@ export default function Home() {
                 to="/video"
                 className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
               >
-                查看全部竖屏 →
+                查看更多 →
               </Link>
             </div>
 
@@ -175,7 +175,7 @@ export default function Home() {
                 to="/works"
                 className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
               >
-                查看全部照片 →
+                查看更多 →
               </Link>
             </div>
 
