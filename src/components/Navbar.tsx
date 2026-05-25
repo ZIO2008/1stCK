@@ -8,8 +8,8 @@ const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'dsl2024';
 
 const navLinks = [
-  { to: '/works', label: '照片', icon: Camera },
   { to: '/video', label: '视频', icon: Film },
+  { to: '/works', label: '照片', icon: Camera },
   { to: '/about', label: '关于', icon: User },
 ];
 
@@ -201,22 +201,6 @@ export default function Navbar() {
               useDark ? 'h-14' : 'h-16'
             )}
           >
-            {/* 作品详情页返回按钮 — 放在 Navbar 内避免被 fixed 层遮挡 */}
-            {isWorkDetail && (
-              <button
-                onClick={() => navigate(backTo)}
-                className={cn(
-                  'flex items-center gap-1.5 mr-3 py-1.5 rounded-lg text-sm transition-colors',
-                  useDark
-                    ? 'text-mist-500 hover:text-mist-800'
-                    : 'text-white/70 hover:text-white'
-                )}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">返回</span>
-              </button>
-            )}
-
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-summit-500 to-lens-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
@@ -232,10 +216,26 @@ export default function Navbar() {
               </span>
             </Link>
 
+            {/* 作品详情页返回按钮 — 位于 Logo 右侧 */}
+            {isWorkDetail && (
+              <button
+                onClick={() => navigate(backTo)}
+                className={cn(
+                  'flex items-center gap-1.5 ml-1 py-1.5 px-2 rounded-lg text-sm transition-colors',
+                  useDark
+                    ? 'text-mist-400 hover:text-mist-700 hover:bg-mist-50'
+                    : 'text-white/60 hover:text-white hover:bg-white/10'
+                )}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">返回</span>
+              </button>
+            )}
+
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map(({ to, label }) => {
-                const isActive = location.pathname === to || (to === '/works' && location.pathname.startsWith('/work/'));
+                const isActive = location.pathname === to;
                 return (
                   <Link
                     key={to}
@@ -316,7 +316,7 @@ export default function Navbar() {
           >
             <div className="p-4 flex flex-col gap-1">
               {navLinks.map(({ to, label, icon: Icon }) => {
-                const isActive = location.pathname === to || (to === '/works' && location.pathname.startsWith('/work/'));
+                const isActive = location.pathname === to;
                 return (
                   <Link
                     key={to}

@@ -63,6 +63,8 @@ export interface Work {
   stills?: string[];
   /** 照片页面专用封面（与视频封面区分） */
   photoCoverImage?: string;
+  /** 标记该作品属于照片类别（照片页独立展示，不含视频） */
+  hasPhoto?: boolean;
 }
 
 /* ---- Tag ---- */

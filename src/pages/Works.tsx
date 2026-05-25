@@ -32,8 +32,10 @@ export default function Works() {
   }, []);
 
   /* ─── 过滤 ─────────────────────────────── */
+  const photoWorks = useMemo(() => works.filter((w) => w.hasPhoto), [works]);
+
   const filteredWorks = useMemo(() => {
-    let result = works;
+    let result = photoWorks;
 
     if (orientation !== 'all') {
       result = result.filter((w) => w.orientation === orientation);
@@ -56,16 +58,16 @@ export default function Works() {
     }
 
     return result;
-  }, [works, orientation, activeType, search]);
+  }, [photoWorks, orientation, activeType, search]);
 
   /* ─── 统计 ─────────────────────────────── */
   const typeCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: works.length };
+    const counts: Record<string, number> = { all: photoWorks.length };
     for (const t of WORK_TYPES) {
-      counts[t] = works.filter((w) => w.type === t).length;
+      counts[t] = photoWorks.filter((w) => w.type === t).length;
     }
     return counts;
-  }, [works]);
+  }, [photoWorks]);
 
   /* ─── 渲染 ─────────────────────────────── */
   return (

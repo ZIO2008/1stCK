@@ -1,13 +1,19 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP } from '@/types';
+import { cn } from '@/lib/utils';
 import StorySection from '@/components/StorySection';
 import BilibiliPlayer from '@/components/BilibiliPlayer';
 
 export default function WorkDetail() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const { works } = useWorks();
   const work = works.find((w) => w.id === id);
+
+  // 判断是否从照片页进入（照片页不展示视频播放器）
+  const fromParam = new URLSearchParams(location.search).get('from');
+  const isPhotoView = fromParam === 'works';
 
   if (!work) {
     return (
@@ -83,27 +89,32 @@ export default function WorkDetail() {
         ))}
       </StorySection>
 
-      {/* ======== 成片（视频嵌入） ======== */}
+      {/* ======== 成片 / 呈现 ======== */}
       <section className="py-16 md:py-20 bg-mist-50">
         <div className="max-w-[960px] mx-auto px-6">
           <div className="mb-10">
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-mist-900 tracking-tight">
-              成片
+              {isPhotoView ? '呈现' : '成片'}
             </h2>
-            <p className="mt-2 text-sm text-mist-400 font-mono tracking-wider uppercase">Result</p>
+            <p className="mt-2 text-sm text-mist-400 font-mono tracking-wider uppercase">
+              {isPhotoView ? 'Presentation' : 'Result'}
+            </p>
           </div>
 
-          {work.videoUrl ? (
-            <div className="rounded-2xl overflow-hidden shadow-elevated">
-              <BilibiliPlayer url={work.videoUrl} />
-            </div>
-          ) : (
-            <div className="rounded-2xl bg-mist-100 p-16 text-center text-mist-400 font-serif">
-              视频链接待补充
-            </div>
+          {/* 视频播放器：仅视频页来源展示 */}
+          {!isPhotoView && (
+            work.videoUrl ? (
+              <div className="rounded-2xl overflow-hidden shadow-elevated">
+                <BilibiliPlayer url={work.videoUrl} />
+              </div>
+            ) : (
+              <div className="rounded-2xl bg-mist-100 p-16 text-center text-mist-400 font-serif">
+                视频链接待补充
+              </div>
+            )
           )}
 
-          <div className="mt-10 font-serif text-base md:text-lg leading-relaxed text-mist-700 space-y-6">
+          <div className={cn('font-serif text-base md:text-lg leading-relaxed text-mist-700 space-y-6', isPhotoView ? 'mt-0' : 'mt-10')}>
             {work.story.result.split('\n\n').map((p, i) => (
               <p key={i}>{p}</p>
             ))}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Camera } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import ArtistStatement from '@/components/ArtistStatement';
 import FeaturedWork from '@/components/FeaturedWork';
@@ -13,9 +13,15 @@ export default function Home() {
   const heroWorks = useMemo(() => works.filter((w) => w.hero), [works]);
   const featuredWorks = useMemo(() => works.filter((w) => w.featured && !w.hero).slice(0, 2), [works]);
 
-  // 竖屏作品：取前6个展示
+  // 竖屏视频作品：取前6个展示
   const portraitWorks = useMemo(
     () => works.filter((w) => w.orientation === 'portrait').slice(0, 6),
+    [works]
+  );
+
+  // 照片作品
+  const photoWorks = useMemo(
+    () => works.filter((w) => w.hasPhoto).slice(0, 6),
     [works]
   );
 
@@ -80,7 +86,7 @@ export default function Home() {
         ]}
       />
 
-      {/* ======== 精选作品 (横屏大图，hero 标记) ======== */}
+      {/* ======== 精选作品 (视频) ======== */}
       {heroWorks.length > 0 && (
         <section className="pb-20 px-6">
           <div className="max-w-[1200px] mx-auto">
@@ -90,10 +96,10 @@ export default function Home() {
                 精选作品
               </h2>
               <Link
-                to="/works"
+                to="/video"
                 className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
               >
-                查看全部横屏 →
+                查看全部视频 →
               </Link>
             </div>
 
@@ -114,9 +120,9 @@ export default function Home() {
         </section>
       )}
 
-      {/* ======== 竖屏短片区块 ======== */}
+      {/* ======== 竖屏短片区块（视频） ======== */}
       {portraitWorks.length > 0 && (
-        <section className="pb-32 px-6 bg-mist-50/60">
+        <section className="pb-20 px-6 bg-mist-50/60">
           <div className="max-w-[1200px] mx-auto pt-20">
             {/* section 标题 */}
             <div className="flex items-baseline justify-between mb-8">
@@ -127,11 +133,7 @@ export default function Home() {
                 <p className="text-mist-400 text-sm">人文纪实 · 城市街拍 · 生活观察</p>
               </div>
               <Link
-                to="/works"
-                onClick={() => {
-                  // 点击后切到竖屏 tab，通过 URL state 传递
-                  sessionStorage.setItem('works_orientation', 'portrait');
-                }}
+                to="/video"
                 className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
               >
                 查看全部竖屏 →
@@ -147,6 +149,45 @@ export default function Home() {
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   <WorkCard work={work} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ======== 照片区域 ======== */}
+      {photoWorks.length > 0 && (
+        <section className="pb-32 px-6">
+          <div className="max-w-[1200px] mx-auto pt-20">
+            {/* section 标题 */}
+            <div className="flex items-baseline justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Camera className="w-5 h-5 text-stone-600" />
+                  <h2 className="font-serif text-2xl font-bold text-mist-900 tracking-tight">
+                    照片
+                  </h2>
+                </div>
+                <p className="text-mist-400 text-sm">风光摄影 · 人文纪实 · 生活切片</p>
+              </div>
+              <Link
+                to="/works"
+                className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
+              >
+                查看全部照片 →
+              </Link>
+            </div>
+
+            {/* 照片网格 */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {photoWorks.map((work, i) => (
+                <div
+                  key={work.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <WorkCard work={work} from="works" />
                 </div>
               ))}
             </div>
