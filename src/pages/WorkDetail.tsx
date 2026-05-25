@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP } from '@/types';
@@ -7,6 +7,7 @@ import BilibiliPlayer from '@/components/BilibiliPlayer';
 
 export default function WorkDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { works } = useWorks();
   const work = works.find((w) => w.id === id);
 
@@ -37,16 +38,16 @@ export default function WorkDetail() {
           alt={work.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
 
         {/* 返回按钮 */}
-        <Link
-          to="/works"
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors z-10"
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-6 left-6 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors z-20 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          作品
-        </Link>
+          返回
+        </button>
 
         {/* 底部标题叠加 */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">

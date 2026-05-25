@@ -136,12 +136,22 @@ function LoginModal({ onClose }: { onClose: () => void }) {
 }
 
 // ── Navbar ──────────────────────────────────────────────────
+// 这些页面顶部没有满屏图片，需要始终显示深色导航栏
+const DARK_NAV_ROUTES = ['/works', '/about', '/admin'];
+
 export default function Navbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const authed = isAdminAuthed();
+
+  // 当前路由是否需要强制深色导航栏（无顶部大图的页面）
+  const forceDark =
+    DARK_NAV_ROUTES.some((r) => location.pathname === r || location.pathname.startsWith(r + '/'));
+
+  // 实际使用深色样式的条件：已滚动 OR 强制深色（无顶图页面）
+  const useDark = scrolled || forceDark;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -165,14 +175,16 @@ export default function Navbar() {
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out',
           scrolled
             ? 'bg-white/80 backdrop-blur-2xl shadow-[0_1px_0_0_rgba(0,0,0,0.06)]'
-            : 'bg-transparent'
+            : forceDark
+              ? 'bg-white/90 backdrop-blur-2xl shadow-[0_1px_0_0_rgba(0,0,0,0.06)]'
+              : 'bg-transparent'
         )}
       >
         <div className="max-w-[1200px] mx-auto px-6">
           <div
             className={cn(
               'flex items-center justify-between transition-all duration-300',
-              scrolled ? 'h-14' : 'h-16'
+              useDark ? 'h-14' : 'h-16'
             )}
           >
             {/* Logo */}
@@ -183,7 +195,7 @@ export default function Navbar() {
               <span
                 className={cn(
                   'font-bold tracking-tight transition-all duration-300',
-                  scrolled ? 'text-mist-900 text-sm' : 'text-white text-base'
+                  useDark ? 'text-mist-900 text-sm' : 'text-white text-base'
                 )}
               >
                 登山路
@@ -200,7 +212,7 @@ export default function Navbar() {
                     to={to}
                     className={cn(
                       'px-4 py-2 rounded-lg text-sm transition-all duration-200',
-                      scrolled
+                      useDark
                         ? isActive ? 'text-mist-900 font-medium' : 'text-mist-500 hover:text-mist-800'
                         : isActive ? 'text-white font-medium' : 'text-white/70 hover:text-white'
                     )}
@@ -216,7 +228,7 @@ export default function Navbar() {
                   to="/admin"
                   className={cn(
                     'ml-1 px-3.5 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5',
-                    scrolled ? 'text-mist-500 hover:text-mist-800' : 'text-white/70 hover:text-white'
+                    useDark ? 'text-mist-500 hover:text-mist-800' : 'text-white/70 hover:text-white'
                   )}
                 >
                   <LogIn className="w-3.5 h-3.5" />
@@ -227,7 +239,7 @@ export default function Navbar() {
                   onClick={() => setLoginOpen(true)}
                   className={cn(
                     'ml-1 px-3.5 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5',
-                    scrolled ? 'text-mist-400 hover:text-mist-700' : 'text-white/60 hover:text-white'
+                    useDark ? 'text-mist-400 hover:text-mist-700' : 'text-white/60 hover:text-white'
                   )}
                 >
                   <LogIn className="w-3.5 h-3.5" />
@@ -240,7 +252,7 @@ export default function Navbar() {
             <button
               className={cn(
                 'md:hidden p-2 rounded-lg transition-colors',
-                scrolled ? 'text-mist-600 hover:bg-mist-100' : 'text-white/80 hover:text-white'
+                useDark ? 'text-mist-600 hover:bg-mist-100' : 'text-white/80 hover:text-white'
               )}
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
