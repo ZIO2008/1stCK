@@ -9,11 +9,20 @@ interface WorkCardProps {
 
 /**
  * 作品卡片 —— 极简网格版
- * 只展示图片，hover 时显示标题和类型
- * 不展示标签、时长、客户
+ * hover 时显示标题 + 三个维度小字（年份 / 内容 / 工具）
  */
 export default function WorkCard({ work }: WorkCardProps) {
   const typeInfo = WORK_TYPE_MAP[work.type];
+
+  // 年份：优先 year 字段，fallback 从 date 提取
+  const year = work.year || work.date?.slice(0, 4) || '';
+
+  // 三维度 meta
+  const meta = [
+    year ? { icon: '📅', text: year } : null,
+    work.subject ? { icon: '🎬', text: work.subject } : null,
+    work.gear ? { icon: '📷', text: work.gear } : null,
+  ].filter(Boolean) as { icon: string; text: string }[];
 
   return (
     <Link
@@ -30,7 +39,7 @@ export default function WorkCard({ work }: WorkCardProps) {
       </div>
 
       {/* Hover overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-mist-900/70 via-mist-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-t from-mist-900/80 via-mist-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Type label — always visible, top left */}
       <div className="absolute top-3 left-3">
@@ -44,11 +53,25 @@ export default function WorkCard({ work }: WorkCardProps) {
         </span>
       </div>
 
-      {/* Title — visible on hover */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-        <h3 className="text-white font-serif text-lg font-bold tracking-tight leading-snug">
+      {/* Title + meta — visible on hover */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <h3 className="text-white font-serif text-base font-bold tracking-tight leading-snug mb-2">
           {work.title}
         </h3>
+
+        {meta.length > 0 && (
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {meta.map(({ icon, text }) => (
+              <span
+                key={text}
+                className="flex items-center gap-1 text-white/70 text-[11px] leading-none"
+              >
+                <span className="text-[10px]">{icon}</span>
+                <span>{text}</span>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </Link>
   );

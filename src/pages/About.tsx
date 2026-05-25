@@ -15,7 +15,7 @@ export default function About() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              'url(/images/bg-about.png)',
+              'url(./images/bg-about.png)',
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50" />

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Work, Tag } from '@/types';
 
 const LS_KEY = 'works_data';
-const TAGS_LS_KEY = 'works_tags';
+// const TAGS_LS_KEY = 'works_tags'; // reserved for future tag persistence
 
 // Default tags
 const defaultTags: Tag[] = [
@@ -25,7 +25,7 @@ const defaultTags: Tag[] = [
 
 export function useWorks() {
   const [works, setWorks] = useState<Work[]>([]);
-  const [tags, setTags] = useState<Tag[]>(defaultTags);
+  const [tags] = useState<Tag[]>(defaultTags);
   const [loading, setLoading] = useState(true);
   const [isLocalOverride, setIsLocalOverride] = useState(false);
 
@@ -48,7 +48,7 @@ export function useWorks() {
 
   const fetchDefault = useCallback(async () => {
     try {
-      const res = await fetch('/data/works.json');
+      const res = await fetch('./data/works.json');
       const data = await res.json();
       setWorks(data);
       setIsLocalOverride(false);
@@ -94,7 +94,7 @@ export function useWorks() {
     localStorage.removeItem(LS_KEY);
     setIsLocalOverride(false);
     try {
-      const res = await fetch('/data/works.json');
+      const res = await fetch('./data/works.json');
       const data = await res.json();
       setWorks(data);
     } catch {

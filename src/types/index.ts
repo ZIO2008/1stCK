@@ -39,6 +39,12 @@ export interface Work {
   type: WorkType;
   tags: string[];
   date: string;
+  /** 作品年份，如 "2024"；不填时自动从 date 字段提取 */
+  year?: string;
+  /** 内容主题，如 "自然景观"、"人文纪实"、"动物" */
+  subject?: string;
+  /** 拍摄工具，如 "索尼 FX3"、"大疆 Air 3"、"佳能 R5" */
+  gear?: string;
   duration?: string;
   client?: string;
   featured?: boolean;

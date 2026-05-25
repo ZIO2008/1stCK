@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP } from '@/types';
-import type { Work, WorkType, Story, Credit } from '@/types';
+import type { Work, WorkType, Story } from '@/types';
 import { Link } from 'react-router-dom';
+import AdminLogin, { isAdminAuthed, clearAdminAuth } from './AdminLogin';
 
 type FormMode = 'list' | 'new' | 'edit';
 
@@ -22,10 +23,11 @@ const emptyWork: Work = {
 
 export default function Admin() {
   const { works, loading, addWork, updateWork, deleteWork, resetToDefault, exportData, importData, isLocalOverride } = useWorks();
+  const [authed, setAuthed] = useState(isAdminAuthed());
   const [mode, setMode] = useState<FormMode>('list');
   const [form, setForm] = useState<Work>(emptyWork);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [tagInput, setTagInput] = useState('');
+  const [_tagInput, _setTagInput] = useState('');
   const [creditRole, setCreditRole] = useState('');
   const [creditName, setCreditName] = useState('');
   const [processImgInput, setProcessImgInput] = useState('');
@@ -95,7 +97,7 @@ export default function Admin() {
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) return;
-      const path = `/images/${file.name}`;
+      const path = `./images/${file.name}`;
       if (key === 'coverImage') {
         set('coverImage', path);
       } else {
@@ -108,14 +110,14 @@ export default function Admin() {
 
   // ---- Available images gallery ----
   const availableImages = [
-    '/images/bg-hero.png', '/images/bg-about.png',
-    '/images/cover-meili-snow-mountain.png', '/images/cover-city-peak-shenzhen.png',
-    '/images/cover-gongga-trek.png', '/images/cover-product-tech.png',
-    '/images/cover-traveler-mountain.png', '/images/cover-documentary-village.png',
-    '/images/cover-concert-music-video.png', '/images/cover-experimental-neon.png',
-    '/images/cover-wedding-cinematic.png', '/images/cover-motion-graphics.png',
-    '/images/process-meili-1.png', '/images/process-meili-2.png',
-    '/images/process-shenzhen-1.png', '/images/process-shenzhen-2.png',
+    './images/bg-hero.png', './images/bg-about.png',
+    './images/cover-meili-snow-mountain.png', './images/cover-city-peak-shenzhen.png',
+    './images/cover-gongga-trek.png', './images/cover-product-tech.png',
+    './images/cover-traveler-mountain.png', './images/cover-documentary-village.png',
+    './images/cover-concert-music-video.png', './images/cover-experimental-neon.png',
+    './images/cover-wedding-cinematic.png', './images/cover-motion-graphics.png',
+    './images/process-meili-1.png', './images/process-meili-2.png',
+    './images/process-shenzhen-1.png', './images/process-shenzhen-2.png',
   ];
 
   // All known tags
@@ -123,6 +125,10 @@ export default function Admin() {
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center text-mist-400">加载中...</div>;
+  }
+
+  if (!authed) {
+    return <AdminLogin onSuccess={() => setAuthed(true)} />;
   }
 
   // ---- RENDER: List view ----
@@ -145,6 +151,13 @@ export default function Admin() {
             </button>
             <button onClick={goNew} className="px-5 py-2 text-sm bg-mist-900 text-white rounded-lg hover:bg-mist-800 transition-colors">
               + 新增作品
+            </button>
+            <button
+              onClick={() => { clearAdminAuth(); setAuthed(false); }}
+              className="px-4 py-2 text-sm border border-mist-100 text-mist-400 rounded-lg hover:bg-mist-50 transition-colors"
+              title="退出登录"
+            >
+              退出
             </button>
           </div>
         </div>
@@ -242,6 +255,22 @@ export default function Admin() {
           <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" placeholder="一句话描述" />
         </div>
 
+        {/* Year / Subject / Gear */}
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-mist-700 mb-1">年份</label>
+            <input value={form.year || ''} onChange={e => set('year', e.target.value)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" placeholder="如 2024" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-mist-700 mb-1">内容主题</label>
+            <input value={form.subject || ''} onChange={e => set('subject', e.target.value)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" placeholder="如 自然景观、人文纪实" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-mist-700 mb-1">拍摄工具</label>
+            <input value={form.gear || ''} onChange={e => set('gear', e.target.value)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" placeholder="如 索尼 FX3、大疆 Air 3" />
+          </div>
+        </div>
+
         {/* Type + Duration + Client */}
         <div className="grid grid-cols-3 gap-4">
           <div>
@@ -266,7 +295,7 @@ export default function Admin() {
         <div>
           <label className="block text-sm font-medium text-mist-700 mb-1">封面图路径 *</label>
           <div className="flex gap-2">
-            <input value={form.coverImage} onChange={e => set('coverImage', e.target.value)} className="flex-1 px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm font-mono" placeholder="/images/cover-xxx.png" />
+            <input value={form.coverImage} onChange={e => set('coverImage', e.target.value)} className="flex-1 px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm font-mono" placeholder="./images/cover-xxx.png" />
             <button onClick={() => handleImagePick('coverImage')} className="px-3 py-2 text-xs border border-mist-200 rounded-lg hover:bg-mist-50 transition-colors">浏览</button>
           </div>
           {form.coverImage && (
@@ -339,7 +368,7 @@ export default function Admin() {
         <div className="border-t border-mist-100 pt-6">
           <h2 className="font-serif text-lg text-mist-900 mb-4">过程图片</h2>
           <div className="flex gap-2 mb-3">
-            <input value={processImgInput} onChange={e => setProcessImgInput(e.target.value)} className="flex-1 px-3 py-2 border border-mist-200 rounded-lg text-sm font-mono" placeholder="/images/process-xxx.png" />
+            <input value={processImgInput} onChange={e => setProcessImgInput(e.target.value)} className="flex-1 px-3 py-2 border border-mist-200 rounded-lg text-sm font-mono" placeholder="./images/process-xxx.png" />
             <button onClick={addProcessImage} className="px-4 py-2 text-sm border border-mist-200 rounded-lg hover:bg-mist-50 transition-colors">添加</button>
             <button onClick={() => handleImagePick('processImages')} className="px-3 py-2 text-xs border border-mist-200 rounded-lg hover:bg-mist-50 transition-colors">浏览</button>
           </div>

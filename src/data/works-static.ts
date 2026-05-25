@@ -31,7 +31,7 @@ export const works: Work[] = [
     title: '在梅里雪山，我等了三天的日照金山',
     subtitle: '卡瓦格博峰的光影奇迹',
     description: '三天守候，只为两分钟的金色神迹。',
-    coverImage: '/images/cover-meili-snow-mountain.png',
+    coverImage: './images/cover-meili-snow-mountain.png',
     videoUrl: 'https://www.bilibili.com/video/BV1GJ411x7h7',
     type: 'travel',
     tags: ['风光', '登山', '调色'],
@@ -67,8 +67,8 @@ export const works: Work[] = [
       { role: '委托方', name: '迪庆州文化和旅游局' },
     ],
     processImages: [
-      '/images/process-meili-1.png',
-      '/images/process-meili-2.png',
+      './images/process-meili-1.png',
+      './images/process-meili-2.png',
     ],
   },
   {
@@ -76,7 +76,7 @@ export const works: Work[] = [
     title: '城市之巅',
     subtitle: '深圳城市宣传片',
     description: '创新不是目的，而是照亮未来的光。',
-    coverImage: '/images/cover-city-peak-shenzhen.png',
+    coverImage: './images/cover-city-peak-shenzhen.png',
     videoUrl: 'https://www.bilibili.com/video/BV1uT4y1P7CX',
     type: 'promo',
     tags: ['城市', '航拍', '剪辑'],
@@ -108,8 +108,8 @@ export const works: Work[] = [
       { role: '委托方', name: '深圳南山科技园' },
     ],
     processImages: [
-      '/images/process-shenzhen-1.png',
-      '/images/process-shenzhen-2.png',
+      './images/process-shenzhen-1.png',
+      './images/process-shenzhen-2.png',
     ],
   },
   {
@@ -117,7 +117,7 @@ export const works: Work[] = [
     title: '贡嘎转山：72公里的自我对话',
     subtitle: '一条朝圣之路的完整记录',
     description: '72公里，6天，无数次想放弃又坚持下来的瞬间。贡嘎教会我的不是征服，而是谦逊。',
-    coverImage: '/images/cover-gongga-trek.png',
+    coverImage: './images/cover-gongga-trek.png',
     videoUrl: 'https://www.bilibili.com/video/BV1XW4y1M7F9',
     type: 'travel',
     tags: ['登山', '徒步', '风光'],
@@ -150,8 +150,8 @@ export const works: Work[] = [
       { role: '户外协作', name: '康巴户外' },
     ],
     processImages: [
-      '/images/process-gongga-1.png',
-      '/images/process-gongga-2.png',
+      './images/process-gongga-1.png',
+      './images/process-gongga-2.png',
     ],
   },
   {
@@ -159,7 +159,7 @@ export const works: Work[] = [
     title: '光影之间',
     subtitle: '珠宝品牌广告片',
     description: '光不是照在珠宝上的，光是从珠宝里流出来的。',
-    coverImage: '/images/cover-product-tech.png',
+    coverImage: './images/cover-product-tech.png',
     type: 'commercial',
     tags: ['产品', '调色'],
     date: '2028-06-20',
@@ -189,8 +189,8 @@ export const works: Work[] = [
       { role: '委托方', name: '隐山珠宝' },
     ],
     processImages: [
-      '/images/process-jewelry-1.png',
-      '/images/process-jewelry-2.png',
+      './images/process-jewelry-1.png',
+      './images/process-jewelry-2.png',
     ],
   },
   {
@@ -198,7 +198,7 @@ export const works: Work[] = [
     title: '在路上：川西14天',
     subtitle: '一个人、一台车、一条未知的路',
     description: '14天自驾穿越川西高原，没有目的地，只有方向。',
-    coverImage: '/images/cover-traveler-mountain.png',
+    coverImage: './images/cover-traveler-mountain.png',
     videoUrl: 'https://www.bilibili.com/video/BV1h54y1Q7rG',
     type: 'vlog',
     tags: ['旅行', '剪辑'],
@@ -225,8 +225,8 @@ export const works: Work[] = [
       { role: '导演 / 摄影 / 剪辑', name: '登山路' },
     ],
     processImages: [
-      '/images/process-chuanxi-1.png',
-      '/images/process-chuanxi-2.png',
+      './images/process-chuanxi-1.png',
+      './images/process-chuanxi-2.png',
     ],
   },
   {
@@ -234,7 +234,7 @@ export const works: Work[] = [
     title: '指尖上的非遗',
     subtitle: '苗族银饰锻造纪实',
     description: '72岁的龙师傅是村里最后的银匠。他锤下的银片比纸还薄，却比任何语言都重。',
-    coverImage: '/images/cover-documentary-village.png',
+    coverImage: './images/cover-documentary-village.png',
     videoUrl: 'https://www.bilibili.com/video/BV1zb4y1Z7Rj',
     type: 'documentary',
     tags: ['人物', '调色'],
@@ -265,8 +265,8 @@ export const works: Work[] = [
       { role: '公益协作', name: '非遗影像计划' },
     ],
     processImages: [
-      '/images/process-heritage-1.png',
-      '/images/process-heritage-2.png',
+      './images/process-heritage-1.png',
+      './images/process-heritage-2.png',
     ],
   },
   {
@@ -274,7 +274,7 @@ export const works: Work[] = [
     title: 'SOLITUDE',
     subtitle: '独舞影像MV',
     description: '在一个废弃的水泥工厂中，舞者用身体语言诠释从困顿到释放的情感弧线。',
-    coverImage: '/images/cover-concert-music-video.png',
+    coverImage: './images/cover-concert-music-video.png',
     type: 'mv',
     tags: ['音乐', '调色'],
     date: '2028-03-18',
@@ -303,8 +303,8 @@ export const works: Work[] = [
       { role: '灯光助理', name: '阿Ken' },
     ],
     processImages: [
-      '/images/process-solitude-1.png',
-      '/images/process-solitude-2.png',
+      './images/process-solitude-1.png',
+      './images/process-solitude-2.png',
     ],
   },
   {
@@ -312,7 +312,7 @@ export const works: Work[] = [
     title: '回声',
     subtitle: '实验影像短片',
     description: '关于记忆与遗忘的实验短片。每一次回忆，都是一次重新构建。',
-    coverImage: '/images/cover-experimental-neon.png',
+    coverImage: './images/cover-experimental-neon.png',
     type: 'creative',
     tags: ['实验', '剪辑'],
     date: '2028-02-10',
@@ -340,8 +340,8 @@ export const works: Work[] = [
       { role: '声音设计', name: '周觉' },
     ],
     processImages: [
-      '/images/process-echo-1.png',
-      '/images/process-echo-2.png',
+      './images/process-echo-1.png',
+      './images/process-echo-2.png',
     ],
   },
   {
@@ -349,7 +349,7 @@ export const works: Work[] = [
     title: '最好的时光',
     subtitle: '苍山洱海间的婚礼',
     description: '不设摆拍，只在旁边安静记录。婚礼不是表演，是两个生命的交汇。',
-    coverImage: '/images/cover-wedding-cinematic.png',
+    coverImage: './images/cover-wedding-cinematic.png',
     type: 'event',
     tags: ['婚礼', '调色'],
     date: '2028-01-22',
@@ -377,8 +377,8 @@ export const works: Work[] = [
       { role: '调色', name: '登山路' },
     ],
     processImages: [
-      '/images/process-wedding-1.png',
-      '/images/process-wedding-2.png',
+      './images/process-wedding-1.png',
+      './images/process-wedding-2.png',
     ],
   },
   {
@@ -386,7 +386,7 @@ export const works: Work[] = [
     title: 'FLUX',
     subtitle: '动态品牌视觉系统',
     description: '从粒子聚合到Logo成型，一套会呼吸的品牌动效。',
-    coverImage: '/images/cover-motion-graphics.png',
+    coverImage: './images/cover-motion-graphics.png',
     type: 'motion',
     tags: ['片头', '剪辑'],
     date: '2027-12-05',
@@ -417,8 +417,8 @@ export const works: Work[] = [
       { role: '委托方', name: 'FLUX Labs' },
     ],
     processImages: [
-      '/images/process-flux-1.png',
-      '/images/process-flux-2.png',
+      './images/process-flux-1.png',
+      './images/process-flux-2.png',
     ],
   },
 ];

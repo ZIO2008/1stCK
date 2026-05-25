@@ -6,7 +6,7 @@ import ArtistStatement from '@/components/ArtistStatement';
 import FeaturedWork from '@/components/FeaturedWork';
 
 export default function Home() {
-  const { works, loading } = useWorks();
+  const { works } = useWorks();
   const [scrolled, setScrolled] = useState(false);
 
   const heroWorks = useMemo(() => works.filter((w) => w.hero), [works]);
@@ -27,7 +27,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              'url(/images/bg-hero.png)',
+              'url(./images/bg-hero.png)',
           }}
         />
         {/* 暗色渐变叠加 */}
