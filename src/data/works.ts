@@ -70,6 +70,11 @@ export const works: Work[] = [
       '/images/process-meili-1.png',
       '/images/process-meili-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-meili-1.png',
+      '/images/process-meili-2.png',
+    ],
   },
   {
     id: 'city-peak-shenzhen',
@@ -153,6 +158,11 @@ export const works: Work[] = [
       '/images/process-gongga-1.png',
       '/images/process-gongga-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-gongga-1.png',
+      '/images/process-gongga-2.png',
+    ],
   },
   {
     id: 'light-and-shadow',
@@ -228,6 +238,11 @@ export const works: Work[] = [
       '/images/process-chuanxi-1.png',
       '/images/process-chuanxi-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-chuanxi-1.png',
+      '/images/process-chuanxi-2.png',
+    ],
   },
   {
     id: 'heritage-craft',
@@ -265,6 +280,11 @@ export const works: Work[] = [
       { role: '公益协作', name: '非遗影像计划' },
     ],
     processImages: [
+      '/images/process-heritage-1.png',
+      '/images/process-heritage-2.png',
+    ],
+    isGroup: true,
+    stills: [
       '/images/process-heritage-1.png',
       '/images/process-heritage-2.png',
     ],
@@ -380,6 +400,11 @@ export const works: Work[] = [
       '/images/process-wedding-1.png',
       '/images/process-wedding-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-wedding-1.png',
+      '/images/process-wedding-2.png',
+    ],
   },
   {
     id: 'flux-motion',
@@ -491,6 +516,11 @@ export const works: Work[] = [
       '/images/process-hiker-1.png',
       '/images/process-hiker-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-hiker-1.png',
+      '/images/process-hiker-2.png',
+    ],
   },
   {
     id: 'night-market-chengdu',
@@ -521,6 +551,11 @@ export const works: Work[] = [
       { role: '导演 / 摄影 / 剪辑', name: '登山路' },
     ],
     processImages: [
+      '/images/process-chengdu-1.png',
+      '/images/process-chengdu-2.png',
+    ],
+    isGroup: true,
+    stills: [
       '/images/process-chengdu-1.png',
       '/images/process-chengdu-2.png',
     ],
@@ -625,6 +660,11 @@ export const works: Work[] = [
       '/images/process-fishing-1.png',
       '/images/process-fishing-2.png',
     ],
+    isGroup: true,
+    stills: [
+      '/images/process-fishing-1.png',
+      '/images/process-fishing-2.png',
+    ],
   },
   {
     id: 'craftsman-bamboo-art',
@@ -689,6 +729,11 @@ export const works: Work[] = [
       { role: '导演 / 摄影 / 剪辑', name: '登山路' },
     ],
     processImages: [
+      '/images/process-surf-1.png',
+      '/images/process-surf-2.png',
+    ],
+    isGroup: true,
+    stills: [
       '/images/process-surf-1.png',
       '/images/process-surf-2.png',
     ],

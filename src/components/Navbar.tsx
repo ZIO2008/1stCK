@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Mountain, Grid3X3, User, Menu, X, Lock, Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
+import { Mountain, Grid3X3, User, Menu, X, Lock, Eye, EyeOff, LogIn, ArrowLeft, Film } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { setAdminAuth, isAdminAuthed } from '@/pages/AdminLogin';
@@ -9,6 +9,7 @@ const ADMIN_PASS = 'dsl2024';
 
 const navLinks = [
   { to: '/works', label: '作品', icon: Grid3X3 },
+  { to: '/video', label: '影像', icon: Film },
   { to: '/about', label: '关于', icon: User },
 ];
 
@@ -137,7 +138,7 @@ function LoginModal({ onClose }: { onClose: () => void }) {
 
 // ── Navbar ──────────────────────────────────────────────────
 // 这些页面顶部没有满屏图片，需要始终显示深色导航栏
-const DARK_NAV_ROUTES = ['/works', '/about', '/admin'];
+const DARK_NAV_ROUTES = ['/works', '/video', '/about', '/admin'];
 
 export default function Navbar() {
   const location = useLocation();

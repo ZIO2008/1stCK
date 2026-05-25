@@ -57,6 +57,10 @@ export interface Work {
   credits: Credit[];
   /** 幕后/过程图片 (Unsplash 占位) */
   processImages: string[];
+  /** 是否为组图作品（多图集） */
+  isGroup?: boolean;
+  /** 组图额外图片 */
+  stills?: string[];
 }
 
 /* ---- Tag ---- */

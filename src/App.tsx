@@ -9,6 +9,7 @@ import WorkDetail from '@/pages/WorkDetail';
 import Works from '@/pages/Works';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
+import Video from '@/pages/Video';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
               <Route path="/works" element={<Works />} />
               <Route path="/tags" element={<Works />} />
               <Route path="/about" element={<About />} />
+              <Route path="/video" element={<Video />} />
               <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
