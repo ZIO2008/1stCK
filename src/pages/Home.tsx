@@ -19,9 +19,9 @@ export default function Home() {
     [works]
   );
 
-  // 照片作品
+  // 照片作品（仅横版，最多4张）
   const photoWorks = useMemo(
-    () => works.filter((w) => w.hasPhoto).slice(0, 6),
+    () => works.filter((w) => w.hasPhoto && w.orientation === 'landscape').slice(0, 4),
     [works]
   );
 

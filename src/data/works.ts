@@ -1006,8 +1006,8 @@ export const works: Work[] = [
     orientation: 'landscape',
     isGroup: true,
     stills: [
-      '/images/photo-cover-ruoergai.png',
-      '/images/photo-cover-ruoergai.png',
+      '/images/photo-still-ruoergai-1.png',
+      '/images/photo-still-ruoergai-2.png',
       '/images/photo-still-ruoergai-3.png',
       '/images/photo-still-ruoergai-4.png',
     ],
@@ -1059,10 +1059,10 @@ export const works: Work[] = [
     orientation: 'landscape',
     isGroup: true,
     stills: [
-      '/images/photo-cover-xiapu.png',
-      '/images/photo-cover-xiapu.png',
-      '/images/photo-cover-xiapu.png',
-      '/images/photo-cover-xiapu.png',
+      '/images/photo-still-xiapu-1.png',
+      '/images/photo-still-xiapu-2.png',
+      '/images/photo-still-xiapu-3.png',
+      '/images/photo-still-xiapu-4.png',
     ],
     story: {
       background:
