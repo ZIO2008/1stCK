@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, X, Film } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP, type WorkType } from '@/types';
+import type { Work } from '@/types';
 import WorkCard from '@/components/WorkCard';
 import { cn } from '@/lib/utils';
 
@@ -14,8 +15,44 @@ const ORIENTATION_OPTIONS = [
 
 const WORK_TYPES = Object.keys(WORK_TYPE_MAP) as WorkType[];
 
+/* ─── 瀑布流分列算法 ────────────────────────────────── */
+function distributeToColumns(works: Work[], columnCount: number): Work[][] {
+  if (columnCount <= 1) return [works];
+
+  const columns: Work[][] = Array.from({ length: columnCount }, () => []);
+  const heights: number[] = Array(columnCount).fill(0);
+
+  for (const work of works) {
+    const isPortrait = work.orientation === 'portrait';
+    // 竖屏 3:4 → 高度权重 4/3 ≈ 1.33，横屏 16:9 → 高度权重 1
+    const estimatedHeight = isPortrait ? 1.33 : 1;
+
+    // 找最短列
+    const shortestCol = heights.indexOf(Math.min(...heights));
+    columns[shortestCol].push(work);
+    heights[shortestCol] += estimatedHeight;
+  }
+
+  return columns;
+}
+
 export default function Video() {
   const { works } = useWorks();
+
+  /* ─── 响应式列数 ─────────────────────── */
+  const [columnCount, setColumnCount] = useState(3);
+
+  useEffect(() => {
+    function handleResize() {
+      const w = window.innerWidth;
+      if (w < 640) setColumnCount(1);
+      else if (w < 1024) setColumnCount(2);
+      else setColumnCount(3);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   /* ─── 状态 ─────────────────────────────── */
   const [search, setSearch] = useState('');
@@ -48,6 +85,12 @@ export default function Video() {
 
     return result;
   }, [works, orientation, activeType, search]);
+
+  /* ─── 分列 ─────────────────────────────── */
+  const columns = useMemo(
+    () => distributeToColumns(filteredWorks, columnCount),
+    [filteredWorks, columnCount],
+  );
 
   /* ─── 统计 ─────────────────────────────── */
   const typeCounts = useMemo(() => {
@@ -148,7 +191,7 @@ export default function Video() {
         </div>
       </div>
 
-      {/* ── 瀑布流画廊 ────────────────────── */}
+      {/* ── 瀑布流画廊（JS 分列，填满不留白）── */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-stone-300">
@@ -166,14 +209,19 @@ export default function Video() {
             </button>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 [column-fill:_balance]">
-            {filteredWorks.map((work, i) => (
+          <div
+            className="flex gap-5"
+            style={{ alignItems: 'flex-start' }}
+          >
+            {columns.map((col, ci) => (
               <div
-                key={work.id}
-                className="mb-5"
-                style={{ animationDelay: `${i * 50}ms` }}
+                key={ci}
+                className="flex-1 flex flex-col gap-5"
+                style={{ minWidth: 0 }}
               >
-                <WorkCard work={work} from="video" />
+                {col.map((work) => (
+                  <WorkCard key={work.id} work={work} from="video" />
+                ))}
               </div>
             ))}
           </div>

@@ -61,6 +61,8 @@ export interface Work {
   isGroup?: boolean;
   /** 组图额外图片 */
   stills?: string[];
+  /** 照片页面专用封面（与视频封面区分） */
+  photoCoverImage?: string;
 }
 
 /* ---- Tag ---- */

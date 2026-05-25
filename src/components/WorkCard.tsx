@@ -19,12 +19,15 @@ export default function WorkCard({ work, from }: WorkCardProps) {
   const year = work.year || work.date?.slice(0, 4) || '';
   const isPortrait = work.orientation === 'portrait';
 
+  // 照片页优先使用 photoCoverImage
+  const imgSrc = from === 'works' ? (work.photoCoverImage || work.coverImage) : work.coverImage;
+
   const linkTo = from ? `/work/${work.id}?from=${from}` : `/work/${work.id}`;
 
   return (
     <Link
       to={linkTo}
-      className="group block break-inside-avoid cursor-pointer animate-fade-in"
+      className="group block cursor-pointer animate-fade-in"
     >
       {/* 图片容器 */}
       <div
@@ -34,7 +37,7 @@ export default function WorkCard({ work, from }: WorkCardProps) {
         )}
       >
         <img
-          src={work.coverImage}
+          src={imgSrc}
           alt={work.title}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -70,26 +73,6 @@ export default function WorkCard({ work, from }: WorkCardProps) {
         </div>
       </div>
 
-      {/* 卡片底部信息（常态可见） */}
-      <div className="mt-2.5 px-0.5">
-        <p className="text-sm text-stone-700 font-medium truncate group-hover:text-stone-900 transition-colors">
-          {work.title}
-        </p>
-        <p className="text-xs text-stone-400 mt-0.5 flex items-center gap-1.5">
-          <span>{typeInfo.label}</span>
-          <span className="text-stone-300">·</span>
-          <span>{year}</span>
-          {work.isGroup && (
-            <>
-              <span className="text-stone-300">·</span>
-              <span className="inline-flex items-center gap-0.5 text-stone-400">
-                <Layers className="w-2.5 h-2.5" />
-                组图
-              </span>
-            </>
-          )}
-        </p>
-      </div>
     </Link>
   );
 }
