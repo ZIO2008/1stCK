@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mountain } from 'lucide-react';
+import { Clapperboard, Mountain } from 'lucide-react';
 
 const footerLinks = [
   { label: '作品', to: '/works' },
@@ -50,6 +50,12 @@ const socialLinks = [
     href: 'https://www.bilibili.com',
     Icon: BilibiliIcon,
     hoverColor: 'hover:text-sky-500',
+  },
+  {
+    label: '新片场',
+    href: 'https://www.xinpianchang.com',
+    Icon: Clapperboard,
+    hoverColor: 'hover:text-amber-500',
   },
 ];
 
