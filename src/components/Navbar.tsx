@@ -182,8 +182,8 @@ export default function Navbar() {
               </div>
               <span
                 className={cn(
-                  'font-bold text-mist-900 tracking-tight transition-all duration-300',
-                  scrolled ? 'text-sm' : 'text-base'
+                  'font-bold tracking-tight transition-all duration-300',
+                  scrolled ? 'text-mist-900 text-sm' : 'text-white text-base'
                 )}
               >
                 登山路
@@ -200,9 +200,9 @@ export default function Navbar() {
                     to={to}
                     className={cn(
                       'px-4 py-2 rounded-lg text-sm transition-all duration-200',
-                      isActive
-                        ? 'text-mist-900 font-medium'
-                        : 'text-mist-500 hover:text-mist-800'
+                      scrolled
+                        ? isActive ? 'text-mist-900 font-medium' : 'text-mist-500 hover:text-mist-800'
+                        : isActive ? 'text-white font-medium' : 'text-white/70 hover:text-white'
                     )}
                   >
                     {label}
@@ -214,7 +214,10 @@ export default function Navbar() {
               {authed ? (
                 <Link
                   to="/admin"
-                  className="ml-1 px-3.5 py-2 rounded-lg text-sm text-mist-500 hover:text-mist-800 transition-colors flex items-center gap-1.5"
+                  className={cn(
+                    'ml-1 px-3.5 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5',
+                    scrolled ? 'text-mist-500 hover:text-mist-800' : 'text-white/70 hover:text-white'
+                  )}
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   后台
@@ -222,7 +225,10 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={() => setLoginOpen(true)}
-                  className="ml-1 px-3.5 py-2 rounded-lg text-sm text-mist-400 hover:text-mist-700 transition-colors flex items-center gap-1.5"
+                  className={cn(
+                    'ml-1 px-3.5 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5',
+                    scrolled ? 'text-mist-400 hover:text-mist-700' : 'text-white/60 hover:text-white'
+                  )}
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   登录
@@ -232,7 +238,10 @@ export default function Navbar() {
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 rounded-lg text-mist-600 hover:bg-mist-100 transition-colors"
+              className={cn(
+                'md:hidden p-2 rounded-lg transition-colors',
+                scrolled ? 'text-mist-600 hover:bg-mist-100' : 'text-white/80 hover:text-white'
+              )}
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
