@@ -387,6 +387,7 @@ export const works: Work[] = [
     subtitle: '动态品牌视觉系统',
     description: '从粒子聚合到Logo成型，一套会呼吸的品牌动效。',
     coverImage: '/images/cover-motion-graphics.png',
+    orientation: 'landscape',
     type: 'motion',
     tags: ['片头', '剪辑'],
     date: '2027-12-05',
@@ -419,6 +420,343 @@ export const works: Work[] = [
     processImages: [
       '/images/process-flux-1.png',
       '/images/process-flux-2.png',
+    ],
+  },
+
+  // ─── 竖屏短片（portrait 3:4）────────────────────────────────────────────────
+  {
+    id: 'street-portrait-guangzhou',
+    title: '广州一日',
+    subtitle: '城市街头纵向记录',
+    description: '行走就是拍摄，每一条小巷都藏着一个人的生活证据。',
+    coverImage: '/images/portrait-cover-guangzhou.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1xx411c7mD',
+    orientation: 'portrait',
+    type: 'vlog',
+    tags: ['人文', '街拍', '竖屏'],
+    date: '2024-03-10',
+    year: '2024',
+    subject: '城市人文',
+    gear: '索尼 ZV-E10 + 35mm F1.8',
+    duration: '3:21',
+    story: {
+      background:
+        '广州北京路的早晨六点。摆摊的婆婆、早餐店的烟火、骑车路过的外卖小哥——这些画面没有全景航拍的宏大，却有一种真实的重量。',
+      thinking:
+        '竖屏强迫观看者聚焦于一个局部。我想用这种亲密的视角记录广州街头的生活证据。',
+      process:
+        '单机稳定器一整天，全程手持，只带一块备用电池。最有趣的画面来自一位小朋友，他用馒头对着镜头外的摩托车认真行礼。',
+      result:
+        '发布后四天播放量超过15万，评论第一条就是"和我家楼下一样"。',
+    },
+    credits: [
+      { role: '导演 / 摄影', name: '登山路' },
+      { role: '剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-guangzhou-1.png',
+      '/images/process-guangzhou-2.png',
+    ],
+  },
+  {
+    id: 'mountain-hiker-portrait',
+    title: '登山者',
+    subtitle: '高海拔的脸',
+    description: '再小的相机也有一双望不够高山的眼睛。',
+    coverImage: '/images/portrait-cover-hiker.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Gx411M7bV',
+    orientation: 'portrait',
+    type: 'documentary',
+    tags: ['登山', '人物', '竖屏'],
+    date: '2024-05-15',
+    year: '2024',
+    subject: '人物纵写',
+    gear: '索尼 FX3 + 85mm F1.4',
+    duration: '5:48',
+    story: {
+      background:
+        '卡瓦格博峰山脚小镇，遥望山顶。周欢其是一个六十岁的藏族老向导，这是他第十四次来到这里。',
+      thinking:
+        '不要拍山，拍一个与山相伴了一辈子的人。',
+      process:
+        '连续跟拍两天，从他准备物资到出发、途中休息、最终抵达观景点。竖屏框道让观众和他的面孔更近。',
+      result:
+        '山野游社区转发后反响热烈，说"看到这个视频我想找这样的向导"。',
+    },
+    credits: [
+      { role: '导演 / 摄影', name: '登山路' },
+      { role: '剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-hiker-1.png',
+      '/images/process-hiker-2.png',
+    ],
+  },
+  {
+    id: 'night-market-chengdu',
+    title: '成都夜宵',
+    subtitle: '刹那的烟火气从筷子里升起来',
+    description: '夜市的灯火和烟火，构成成都最真实的第二层。',
+    coverImage: '/images/portrait-cover-chengdu.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Hx4y1X7Tr',
+    orientation: 'portrait',
+    type: 'travel',
+    tags: ['美食', '夜景', '竖屏'],
+    date: '2024-01-20',
+    year: '2024',
+    subject: '美食人文',
+    gear: '索尼 A7C + 50mm F1.2',
+    duration: '2:56',
+    story: {
+      background:
+        '成都宽窄巷1号小地。凌晨十二点，面前是满桌的串串、锅里赤红的汤底、汗流浃背的面条师傅。这些画面真实得让人眼眶发酸。',
+      thinking:
+        '就用竖屏扎进烟火里。小屏占满了才能传达这个域的喧嚣。',
+      process:
+        '轻装单机无脚架街游记录，没有补光，只依靠现场光和店面灯光。最终拍到存储卡满才回酒店。',
+      result:
+        '整个视频没有一句口语，全程环境音加配乐，四天内播放量达到48万。',
+    },
+    credits: [
+      { role: '导演 / 摄影 / 剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-chengdu-1.png',
+      '/images/process-chengdu-2.png',
+    ],
+  },
+  {
+    id: 'tea-farmer-yunnan',
+    title: '叶上春秋',
+    subtitle: '云南老茶农的一天',
+    description: '最年轻的茶农六十岁，最年老的茶树三百岁。',
+    coverImage: '/images/portrait-cover-tea.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Lx4y1v7En',
+    orientation: 'portrait',
+    type: 'documentary',
+    tags: ['人物', '远行', '竖屏'],
+    date: '2023-04-05',
+    year: '2023',
+    subject: '人文纪实',
+    gear: '索尼 A7M4 + 35mm F1.4',
+    duration: '7:12',
+    story: {
+      background:
+        '云南普洱古茶山。一块已经在家族里传了六代的茶地。老丹的儿子已经去了大城市，她一个人守在这山里。',
+      thinking:
+        '不找山上的全景，只拍她的手和肩背。竖屏让要讲的东西精准了。',
+      process:
+        '跟她一起凌晨四点起床采茶。光线减弱后用手机补拍，没有指挥，她走我跟。',
+      result:
+        '成都茶叶商用作商业素材引用，来访看过的人经常表示"看完真的去买茶了"。',
+    },
+    credits: [
+      { role: '导演 / 摄影', name: '登山路' },
+      { role: '剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-tea-1.png',
+      '/images/process-tea-2.png',
+    ],
+  },
+  {
+    id: 'ballet-dancer-backstage',
+    title: '幕后六分钟',
+    subtitle: '一个芭蕾演员的周五夜晚',
+    description: '灯光点亮之前，座位满了，她还在幕后独自对着镜子。',
+    coverImage: '/images/portrait-cover-ballet.png',
+    videoUrl: 'https://www.bilibili.com/video/BV14x4y1Z7cX',
+    orientation: 'portrait',
+    type: 'documentary',
+    tags: ['人物', '艺术', '竖屏'],
+    date: '2024-02-28',
+    year: '2024',
+    subject: '艺术人纵写',
+    gear: '索尼 FX3 + 50mm F1.2',
+    duration: '4:15',
+    story: {
+      background:
+        '广州大剧院。莉莉是今年的主角，她从小学芭蕾，今年二十六岁。我想拍的是幕后的她，不是舞台上的她。',
+      thinking:
+        '竖屏让人物占满屏幕，引导观众直接与表演者面对面。',
+      process:
+        '连续跟拍三场演出。最好的画面在演出前，她独自在幕后用坐着的姿势准备热身等待登场。',
+      result:
+        '广州文化局小红书转发，评论区很多人说"看到她的演出之后第一次想去看芭蕾"。',
+    },
+    credits: [
+      { role: '导演 / 摄影', name: '登山路' },
+      { role: '剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-ballet-1.png',
+      '/images/process-ballet-2.png',
+    ],
+  },
+  {
+    id: 'fishing-village-dawn',
+    title: '渔港日出',
+    subtitle: '山东日照渔港的清晨',
+    description: '第一网鱼还没收，渔船就已经出港。天默默亮起来。',
+    coverImage: '/images/portrait-cover-fishing.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1pJ411G7Vh',
+    orientation: 'portrait',
+    type: 'travel',
+    tags: ['纪实', '海洋', '竖屏'],
+    date: '2023-08-12',
+    year: '2023',
+    subject: '渔村人文',
+    gear: '索尼 A7C + 28mm F2',
+    duration: '3:44',
+    story: {
+      background:
+        '山东日照渔港。不是旅游景点，就是一个日常工作的渔港。也没有什么特别的故事，就是一个人一天的日子。',
+      thinking:
+        '竖屏自带的垂直感，把人立在海和天之间的气质截出来。',
+      process:
+        '凌晨五点跟船家出发，文化差异导致没有什么有意识的语言交流，只是跟着看。',
+      result:
+        '平台推荐后单视频观看量超过六十万，评论区变成了许多人对这个渔港的向往。',
+    },
+    credits: [
+      { role: '导演 / 摄影 / 剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-fishing-1.png',
+      '/images/process-fishing-2.png',
+    ],
+  },
+  {
+    id: 'craftsman-bamboo-art',
+    title: '竹山居后',
+    subtitle: '湖南竹编匠人的年味',
+    description: '他一天能完成一个竹编筐，不多也不少。',
+    coverImage: '/images/portrait-cover-bamboo.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Kx4y1Z7Ua',
+    orientation: 'portrait',
+    type: 'documentary',
+    tags: ['非遗', '手工', '竖屏'],
+    date: '2024-04-18',
+    year: '2024',
+    subject: '民间非遗',
+    gear: '索尼 A7M4 + 90mm微距',
+    duration: '6:30',
+    story: {
+      background:
+        '湖南某安小镇。胡巧的父亲就这样指导他编竹，也就这样附着一代一代传了下来。',
+      thinking:
+        '竖屏让手部和竹节关系专注。就这一个主题。',
+      process:
+        '第一天全程远拍，第二天才拿近。手部的微距拍到了竹节上无数次刷动摩擦的痕迹。',
+      result:
+        '去外地工作的年轻人看到这个视频，就回来买了他父亲的竹筐。',
+    },
+    credits: [
+      { role: '导演 / 摄影', name: '登山路' },
+      { role: '剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-bamboo-1.png',
+      '/images/process-bamboo-2.png',
+    ],
+  },
+  {
+    id: 'surfer-hainan',
+    title: '海南浪',
+    subtitle: '一个冲浪者的冬季',
+    description: '冬天来海南冲浪的人，多半不是为了浪。',
+    coverImage: '/images/portrait-cover-surf.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1kx4y1S7Xx',
+    orientation: 'portrait',
+    type: 'travel',
+    tags: ['运动', '海洋', '竖屏'],
+    date: '2024-01-08',
+    year: '2024',
+    subject: '运动人文',
+    gear: '索尼 FX3 + 防水壳 + 大疆 Osmo Action',
+    duration: '4:58',
+    story: {
+      background:
+        '三亚日月湾海滩。每年冬天，北方冲浪者南下，海滩就换了面貌。我把这种现象称为"季节接山"。',
+      thinking:
+        '竖屏把海浪和人都圈进来了。一种被包裹的感觉。',
+      process:
+        '防水壳带着摄影机下水跟拍，第三天才拍到一个好浪。标准镜头是一切。',
+      result:
+        '吸引了一批冲浪社区粉丝，并有多个品牌主动联系合作。',
+    },
+    credits: [
+      { role: '导演 / 摄影 / 剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-surf-1.png',
+      '/images/process-surf-2.png',
+    ],
+  },
+  {
+    id: 'flower-market-spring',
+    title: '迎春花市',
+    subtitle: '广州花市夜走一圈',
+    description: '一年一度的花市，人与花的面貌都是季节的符号。',
+    coverImage: '/images/portrait-cover-flower.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Xx4y1T7bX',
+    orientation: 'portrait',
+    type: 'vlog',
+    tags: ['节庆', '人文', '竖屏'],
+    date: '2024-02-08',
+    year: '2024',
+    subject: '广州民俗',
+    gear: '索尼 ZV-E10 + 24mm F2.8',
+    duration: '2:33',
+    story: {
+      background:
+        '广州花地广场花市。除夕前一晚，万人涌动。我易装轻装混进去。',
+      thinking:
+        '竖屏能让人和花都被包裹在一个亲密可视的空间里。',
+      process:
+        '这是我拍到特别多笑容的一次拍摄。人们对着镜头笑、孩子们抱着花松。',
+      result:
+        '春节前一天发布，当天播放量超三十万。许多广州不在家的人评论"想回家了"。',
+    },
+    credits: [
+      { role: '导演 / 摄影 / 剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-flower-1.png',
+      '/images/process-flower-2.png',
+    ],
+  },
+  {
+    id: 'subway-strangers',
+    title: '地铁里的陌生人',
+    subtitle: '一小时内八个陌生人的表情',
+    description: '每个人都在赶路，每个人都在展示自己的一面。',
+    coverImage: '/images/portrait-cover-subway.png',
+    videoUrl: 'https://www.bilibili.com/video/BV1Hx411c7bX',
+    orientation: 'portrait',
+    type: 'creative',
+    tags: ['街拍', '人文', '竖屏'],
+    date: '2024-03-25',
+    year: '2024',
+    subject: '城市观察',
+    gear: '索尼 ZV-E10 + 16mm F2.8',
+    duration: '1:58',
+    story: {
+      background:
+        '广州地铁三号线。高峰期，走不动。我把手机举起来开始录。周边的脸变得比平时更有趣。',
+      thinking:
+        '竖屏广视角能把一车厢的气氛干净地展示。',
+      process:
+        '连续五天在同一个时间段在同一个车厢记录，剩下的是筛选。',
+      result:
+        '小红书"公共交通"话题内转发，评论区评分极高。',
+    },
+    credits: [
+      { role: '导演 / 摄影 / 剪辑', name: '登山路' },
+    ],
+    processImages: [
+      '/images/process-subway-1.png',
+      '/images/process-subway-2.png',
     ],
   },
 ];
