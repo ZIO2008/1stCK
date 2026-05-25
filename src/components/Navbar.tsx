@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Mountain, Grid3X3, User, Menu, X, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
+import { Mountain, Grid3X3, User, Menu, X, Lock, Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { setAdminAuth, isAdminAuthed } from '@/pages/AdminLogin';
@@ -150,8 +150,13 @@ export default function Navbar() {
   const forceDark =
     DARK_NAV_ROUTES.some((r) => location.pathname === r || location.pathname.startsWith(r + '/'));
 
+  // 作品详情页（有封面大图，导航栏透明但需要返回按钮）
+  const isWorkDetail = location.pathname.startsWith('/work/') && location.pathname !== '/works';
+
   // 实际使用深色样式的条件：已滚动 OR 强制深色（无顶图页面）
   const useDark = scrolled || forceDark;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -187,6 +192,22 @@ export default function Navbar() {
               useDark ? 'h-14' : 'h-16'
             )}
           >
+            {/* 作品详情页返回按钮 — 放在 Navbar 内避免被 fixed 层遮挡 */}
+            {isWorkDetail && (
+              <button
+                onClick={() => navigate(-1)}
+                className={cn(
+                  'flex items-center gap-1.5 mr-3 py-1.5 rounded-lg text-sm transition-colors',
+                  useDark
+                    ? 'text-mist-500 hover:text-mist-800'
+                    : 'text-white/70 hover:text-white'
+                )}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">返回</span>
+              </button>
+            )}
+
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-summit-500 to-lens-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
