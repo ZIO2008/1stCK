@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import ArtistStatement from '@/components/ArtistStatement';
 import FeaturedWork from '@/components/FeaturedWork';
+import WorkCard from '@/components/WorkCard';
 
 export default function Home() {
   const { works } = useWorks();
@@ -11,6 +12,12 @@ export default function Home() {
 
   const heroWorks = useMemo(() => works.filter((w) => w.hero), [works]);
   const featuredWorks = useMemo(() => works.filter((w) => w.featured && !w.hero).slice(0, 2), [works]);
+
+  // 竖屏作品：取前6个展示
+  const portraitWorks = useMemo(
+    () => works.filter((w) => w.orientation === 'portrait').slice(0, 6),
+    [works]
+  );
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -73,32 +80,76 @@ export default function Home() {
         ]}
       />
 
-      {/* ======== 精选作品 (1-2部，hero 标记) ======== */}
+      {/* ======== 精选作品 (横屏大图，hero 标记) ======== */}
       {heroWorks.length > 0 && (
-        <section className="pb-32 px-6">
-          <div className="max-w-[1200px] mx-auto space-y-6">
-            {heroWorks.map((work) => (
-              <FeaturedWork key={work.id} work={work} />
-            ))}
-          </div>
+        <section className="pb-20 px-6">
+          <div className="max-w-[1200px] mx-auto">
+            {/* section 标题 */}
+            <div className="flex items-baseline justify-between mb-8">
+              <h2 className="font-serif text-2xl font-bold text-mist-900 tracking-tight">
+                精选作品
+              </h2>
+              <Link
+                to="/works"
+                className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
+              >
+                查看全部横屏 →
+              </Link>
+            </div>
 
-          {featuredWorks.length > 0 && (
-            <div className="max-w-[1200px] mx-auto mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredWorks.map((work) => (
+            <div className="space-y-6">
+              {heroWorks.map((work) => (
                 <FeaturedWork key={work.id} work={work} />
               ))}
             </div>
-          )}
 
-          {/* 查看全部链接 */}
-          <div className="max-w-[1200px] mx-auto mt-16 text-center">
-            <Link
-              to="/works"
-              className="inline-flex items-center gap-2 font-serif text-lg text-mist-500 hover:text-mist-800 transition-colors duration-200"
-            >
-              查看全部作品
-              <span className="text-mist-300">&rarr;</span>
-            </Link>
+            {featuredWorks.length > 0 && (
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {featuredWorks.map((work) => (
+                  <FeaturedWork key={work.id} work={work} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ======== 竖屏短片区块 ======== */}
+      {portraitWorks.length > 0 && (
+        <section className="pb-32 px-6 bg-mist-50/60">
+          <div className="max-w-[1200px] mx-auto pt-20">
+            {/* section 标题 */}
+            <div className="flex items-baseline justify-between mb-8">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-mist-900 tracking-tight mb-1">
+                  竖屏短片
+                </h2>
+                <p className="text-mist-400 text-sm">人文纪实 · 城市街拍 · 生活观察</p>
+              </div>
+              <Link
+                to="/works"
+                onClick={() => {
+                  // 点击后切到竖屏 tab，通过 URL state 传递
+                  sessionStorage.setItem('works_orientation', 'portrait');
+                }}
+                className="text-sm text-mist-400 hover:text-mist-700 transition-colors"
+              >
+                查看全部竖屏 →
+              </Link>
+            </div>
+
+            {/* 竖屏网格：4列 3:4 卡片 */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {portraitWorks.map((work, i) => (
+                <div
+                  key={work.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <WorkCard work={work} />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}

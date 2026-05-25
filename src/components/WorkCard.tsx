@@ -24,12 +24,15 @@ export default function WorkCard({ work }: WorkCardProps) {
     work.gear ? { icon: '📷', text: work.gear } : null,
   ].filter(Boolean) as { icon: string; text: string }[];
 
+  // 根据 orientation 决定比例：竖屏 3:4，横屏默认 16:9
+  const isPortrait = work.orientation === 'portrait';
+
   return (
     <Link
       to={`/work/${work.id}`}
       className="group block relative rounded-xl overflow-hidden bg-mist-100 animate-scale-in"
     >
-      <div className="aspect-[4/3] overflow-hidden">
+      <div className={cn('overflow-hidden', isPortrait ? 'aspect-[3/4]' : 'aspect-video')}>
         <img
           src={work.coverImage}
           alt={work.title}

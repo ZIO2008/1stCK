@@ -45,6 +45,8 @@ export interface Work {
   subject?: string;
   /** 拍摄工具，如 "索尼 FX3"、"大疆 Air 3"、"佳能 R5" */
   gear?: string;
+  /** 画面方向：横屏 landscape (16:9) / 竖屏 portrait (3:4) */
+  orientation?: 'landscape' | 'portrait';
   duration?: string;
   client?: string;
   featured?: boolean;
