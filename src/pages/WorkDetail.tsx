@@ -40,10 +40,10 @@ export default function WorkDetail() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
 
-        {/* 返回按钮 */}
+        {/* 返回按钮 — z-[60] 必须高于 Navbar 的 z-50，否则固定导航栏会遮挡点击 */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors z-20 cursor-pointer"
+          className="absolute top-6 left-6 flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors z-[60] cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           返回
