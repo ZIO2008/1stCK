@@ -195,7 +195,7 @@ export default function Navbar() {
             {/* 作品详情页返回按钮 — 放在 Navbar 内避免被 fixed 层遮挡 */}
             {isWorkDetail && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate('/works')}
                 className={cn(
                   'flex items-center gap-1.5 mr-3 py-1.5 rounded-lg text-sm transition-colors',
                   useDark
