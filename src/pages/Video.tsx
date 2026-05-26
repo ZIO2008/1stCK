@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, X, Film } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP, type WorkType } from '@/types';
@@ -45,6 +46,18 @@ export default function Video() {
 
   /* ─── 弹窗状态 ───────────────────────── */
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+
+  /* ─── URL 预览参数支持 ──────────────── */
+  const [searchParams] = useSearchParams();
+  const previewId = searchParams.get('preview');
+
+  useEffect(() => {
+    if (previewId && works.length > 0) {
+      const videoOnly = works.filter((w) => w.videoUrl);
+      const target = videoOnly.find((w) => w.id === previewId);
+      if (target) setSelectedWork(target);
+    }
+  }, [previewId, works]);
 
   useEffect(() => {
     function handleResize() {

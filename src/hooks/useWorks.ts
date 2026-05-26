@@ -2,6 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Work, Tag } from '@/types';
 
 const LS_KEY = 'works_data';
+const DATA_VERSION = '2026-05-26';
+
+// Helper: persist works to localStorage with version stamp
+function persistToStorage(works: Work[]) {
+  localStorage.setItem(LS_KEY, JSON.stringify({ version: DATA_VERSION, data: works }));
+}
 // const TAGS_LS_KEY = 'works_tags'; // reserved for future tag persistence
 
 // Default tags
@@ -29,15 +35,22 @@ export function useWorks() {
   const [loading, setLoading] = useState(true);
   const [isLocalOverride, setIsLocalOverride] = useState(false);
 
-  // Load data: localStorage first, then fetch JSON
+  // Load data: localStorage first (with version check), then fetch JSON
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved) as Work[];
-        setWorks(parsed);
-        setIsLocalOverride(true);
-        setLoading(false);
+        const parsed = JSON.parse(saved);
+        // Check version — discard stale cache so admin always sees latest data
+        if (parsed && parsed.version === DATA_VERSION && Array.isArray(parsed.data)) {
+          setWorks(parsed.data as Work[]);
+          setIsLocalOverride(true);
+          setLoading(false);
+        } else {
+          // Outdated version or wrong format → reload from source
+          localStorage.removeItem(LS_KEY);
+          fetchDefault();
+        }
       } catch {
         fetchDefault();
       }
@@ -65,7 +78,7 @@ export function useWorks() {
   const addWork = useCallback((work: Work) => {
     setWorks(prev => {
       const next = [work, ...prev];
-      localStorage.setItem(LS_KEY, JSON.stringify(next));
+      persistToStorage(next);
       return next;
     });
     setIsLocalOverride(true);
@@ -74,7 +87,7 @@ export function useWorks() {
   const updateWork = useCallback((id: string, updates: Partial<Work>) => {
     setWorks(prev => {
       const next = prev.map(w => w.id === id ? { ...w, ...updates } : w);
-      localStorage.setItem(LS_KEY, JSON.stringify(next));
+      persistToStorage(next);
       return next;
     });
     setIsLocalOverride(true);
@@ -83,7 +96,7 @@ export function useWorks() {
   const deleteWork = useCallback((id: string) => {
     setWorks(prev => {
       const next = prev.filter(w => w.id !== id);
-      localStorage.setItem(LS_KEY, JSON.stringify(next));
+      persistToStorage(next);
       return next;
     });
     setIsLocalOverride(true);
@@ -116,7 +129,7 @@ export function useWorks() {
 
   // Import data from JSON file
   const importData = useCallback((data: Work[]) => {
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
+    persistToStorage(data);
     setWorks(data);
     setIsLocalOverride(true);
   }, []);

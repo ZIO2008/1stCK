@@ -354,7 +354,11 @@ export default function Admin() {
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <Link to={`/work/${w.id}`} target="_blank" className="px-3 py-1.5 text-xs border border-mist-200 rounded hover:bg-mist-50 transition-colors">
+                <Link
+                  to={w.videoUrl ? `/video?preview=${w.id}` : (w.hasPhoto ? `/works?preview=${w.id}` : `/work/${w.id}`)}
+                  target="_blank"
+                  className="px-3 py-1.5 text-xs border border-mist-200 rounded hover:bg-mist-50 transition-colors"
+                >
                   预览
                 </Link>
                 <button onClick={() => goEdit(w)} className="px-3 py-1.5 text-xs border border-lens-200 text-lens-700 rounded hover:bg-lens-50 transition-colors">

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useWorks } from '@/context/WorksContext';
 import type { WorkType } from '@/types';
 import type { Work } from '@/types';
@@ -44,6 +45,18 @@ export default function Works() {
 
   /* ─── 弹窗状态 ───────────────────────── */
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+
+  /* ─── URL 预览参数支持 ──────────────── */
+  const [searchParams] = useSearchParams();
+  const previewId = searchParams.get('preview');
+
+  useEffect(() => {
+    if (previewId && works.length > 0) {
+      const photoOnly = works.filter((w) => w.hasPhoto && !w.videoUrl);
+      const target = photoOnly.find((w) => w.id === previewId);
+      if (target) setSelectedWork(target);
+    }
+  }, [previewId, works]);
 
   useEffect(() => {
     function handleResize() {
