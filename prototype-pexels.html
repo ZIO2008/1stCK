@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pexels 风格视频弹窗 — 原型</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ── 模拟瀑布流背景（被弹窗遮住） ── */
+  .backdrop-grid {
+    position: fixed; inset: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; padding: 20px; opacity: 0.15;
+  }
+  .backdrop-grid .card {
+    background: #1a1a1a; border-radius: 8px;
+    aspect-ratio: var(--ar, 16/9);
+  }
+  .backdrop-grid .card:nth-child(3n+1) { --ar: 3/4; }
+  .backdrop-grid .card:nth-child(3n+3) { --ar: 9/16; }
+
+  /* ── 弹窗覆盖层 ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,0.92);
+    display: flex; flex-direction: column;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── 关闭按钮 ── */
+  .close-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 60;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: none; color: #fff;
+    font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .close-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── 导航箭头 ── */
+  .nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%); z-index: 60;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,0.08); border: none; color: #fff;
+    font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; opacity: 0;
+  }
+  .modal-overlay:hover .nav-arrow { opacity: 1; }
+  .nav-arrow:hover { background: rgba(255,255,255,0.2); }
+  .nav-arrow.prev { left: 16px; }
+  .nav-arrow.next { right: 16px; }
+
+  /* ── 滚动内容区 ── */
+  .scroll-area {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ── 视频播放器区 ── */
+  .player-section {
+    width: 100%; max-width: 900px; margin: 0 auto;
+    padding: 60px 24px 0;
+  }
+  .player-wrapper {
+    position: relative; width: 100%; border-radius: 12px; overflow: hidden;
+    background: #000; box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .player-wrapper .aspect {
+    width: 100%; padding-bottom: 56.25%; /* 16:9 */
+  }
+  .player-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+  .player-placeholder .play-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
+  }
+  .player-placeholder .play-icon::after {
+    content: ''; width: 0; height: 0;
+    border-left: 18px solid #fff;
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    margin-left: 4px;
+  }
+
+  /* ── Info Bar ── */
+  .info-bar {
+    max-width: 900px; margin: 0 auto; padding: 20px 24px;
+  }
+  .info-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .info-left { flex: 1; min-width: 0; }
+  .info-left h2 {
+    font-size: 1.5rem; font-weight: 600; line-height: 1.3;
+    color: #fff; margin-bottom: 8px;
+  }
+  .info-meta {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 0.8rem; color: rgba(255,255,255,0.5);
+  }
+  .info-meta .dot {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+  }
+  .info-right {
+    text-align: right; font-size: 0.8rem; color: rgba(255,255,255,0.5);
+    white-space: nowrap;
+  }
+
+  /* ── Tags ── */
+  .tags-row {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;
+  }
+  .tag {
+    padding: 4px 12px; border-radius: 999px;
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+    font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
+    border: none;
+  }
+  .tag:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* ── 描述区 ── */
+  .description-section {
+    max-width: 900px; margin: 0 auto; padding: 0 24px 20px;
+  }
+  .description-section p {
+    font-size: 0.9rem; color: rgba(255,255,255,0.6);
+    line-height: 1.7; max-width: 600px;
+  }
+
+  /* ── Credits ── */
+  .credits-row {
+    max-width: 900px; margin: 0 auto; padding: 0 24px 10px;
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-size: 0.78rem; color: rgba(255,255,255,0.45);
+  }
+  .credit-item { display: flex; gap: 6px; }
+  .credit-label { color: rgba(255,255,255,0.3); }
+
+  /* ── Divider ── */
+  .divider {
+    max-width: 900px; margin: 16px auto; padding: 0 24px;
+    height: 1px; background: rgba(255,255,255,0.08);
+  }
+
+  /* ── 相关作品标题 ── */
+  .related-header {
+    max-width: 900px; margin: 0 auto; padding: 20px 24px 16px;
+  }
+  .related-header h3 {
+    font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.7);
+  }
+
+  /* ── 相关作品网格 ── */
+  .related-grid {
+    max-width: 900px; margin: 0 auto; padding: 0 24px 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .related-card {
+    border-radius: 8px; overflow: hidden; background: #1a1a1a;
+    cursor: pointer; transition: transform 0.2s;
+    position: relative;
+  }
+  .related-card:hover { transform: scale(1.02); }
+  .related-card img {
+    width: 100%; display: block;
+    aspect-ratio: 16/9; object-fit: cover;
+  }
+  .related-card .card-info {
+    padding: 8px 10px;
+  }
+  .related-card .card-title {
+    font-size: 0.75rem; color: rgba(255,255,255,0.7);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .related-card .card-meta {
+    font-size: 0.65rem; color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .player-section { padding: 20px 16px 0; }
+    .player-wrapper { border-radius: 8px; }
+    .info-bar { padding: 16px; }
+    .info-left h2 { font-size: 1.2rem; }
+    .description-section { padding: 0 16px 16px; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); padding: 0 16px 40px; }
+    .nav-arrow { opacity: 1; width: 36px; height: 36px; font-size: 18px; }
+    .nav-arrow.prev { left: 8px; }
+    .nav-arrow.next { right: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 背景瀑布流（模拟列表页） -->
+<div class="backdrop-grid">
+  <div class="card"></div><div class="card"></div><div class="card"></div>
+  <div class="card"></div><div class="card"></div><div class="card"></div>
+  <div class="card"></div><div class="card"></div><div class="card"></div>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-overlay" id="modal">
+
+  <!-- 关闭按钮 -->
+  <button class="close-btn" title="关闭 (Esc)">&times;</button>
+
+  <!-- 左箭头 -->
+  <button class="nav-arrow prev" title="上一个 (←)">&#8249;</button>
+  <!-- 右箭头 -->
+  <button class="nav-arrow next" title="下一个 (→)">&#8250;</button>
+
+  <!-- 滚动区域 -->
+  <div class="scroll-area">
+
+    <!-- 视频播放器 -->
+    <div class="player-section">
+      <div class="player-wrapper">
+        <div class="aspect"></div>
+        <div class="player-placeholder">
+          <div class="play-icon"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Bar -->
+    <div class="info-bar">
+      <div class="info-top">
+        <div class="info-left">
+          <h2>城市光影 · 广州塔夜景</h2>
+          <div class="info-meta">
+            <span>短片</span>
+            <span class="dot"></span>
+            <span>2025</span>
+            <span class="dot"></span>
+            <span>3:24</span>
+          </div>
+        </div>
+        <div class="info-right">
+          <div>Sony FX3</div>
+          <div style="margin-top:2px;">24-70mm f/2.8 GM II</div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="tags-row">
+        <button class="tag">城市</button>
+        <button class="tag">夜景</button>
+        <button class="tag">广州</button>
+        <button class="tag">延时摄影</button>
+        <button class="tag">航拍</button>
+        <button class="tag">旅行</button>
+      </div>
+    </div>
+
+    <!-- 描述 -->
+    <div class="description-section">
+      <p>广州塔在夜色中缓缓转动，珠江两岸光影交错。延时镜头捕捉了城市从黄昏到深夜的完整色彩过渡，是献给这座城市的一首视觉诗。</p>
+    </div>
+
+    <!-- Credits -->
+    <div class="credits-row">
+      <div class="credit-item">
+        <span class="credit-label">导演</span>
+        <span>登山路</span>
+      </div>
+      <div class="credit-item">
+        <span class="credit-label">摄影</span>
+        <span>登山路</span>
+      </div>
+      <div class="credit-item">
+        <span class="credit-label">剪辑</span>
+        <span>登山路</span>
+      </div>
+      <div class="credit-item">
+        <span class="credit-label">调色</span>
+        <span>DaVinci Resolve</span>
+      </div>
+    </div>
+
+    <!-- 分隔线 -->
+    <div class="divider"></div>
+
+    <!-- 相关作品 -->
+    <div class="related-header">
+      <h3>更多相似作品</h3>
+    </div>
+
+    <div class="related-grid">
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%23222' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">日出黄山</div>
+          <div class="card-meta">2025 · 短片</div>
+        </div>
+      </div>
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%232a2a3a' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">街头霓虹</div>
+          <div class="card-meta">2024 · 短片</div>
+        </div>
+      </div>
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%23222' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">漠河极光</div>
+          <div class="card-meta">2024 · 短片</div>
+        </div>
+      </div>
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%232a2a3a' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">雨中的上海</div>
+          <div class="card-meta">2023 · 短片</div>
+        </div>
+      </div>
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%23222' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">雪国列车</div>
+          <div class="card-meta">2023 · 短片</div>
+        </div>
+      </div>
+      <div class="related-card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225'%3E%3Crect fill='%232a2a3a' width='400' height='225'/%3E%3Ctext fill='%23555' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' font-size='14'%3EPreview%3C/text%3E%3C/svg%3E" alt="">
+        <div class="card-info">
+          <div class="card-title">海边慢生活</div>
+          <div class="card-meta">2022 · MV</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-area -->
+</div><!-- /modal-overlay -->
+
+</body>
+</html>

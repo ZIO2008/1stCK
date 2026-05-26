@@ -7,6 +7,7 @@ import ArtistStatement from '@/components/ArtistStatement';
 import FeaturedWork from '@/components/FeaturedWork';
 import WorkCard from '@/components/WorkCard';
 import PhotoModal from '@/components/PhotoModal';
+import VideoModal from '@/components/VideoModal';
 
 export default function Home() {
   const { works } = useWorks();
@@ -17,6 +18,7 @@ export default function Home() {
 
   const heroWorks = useMemo(() => works.filter((w) => w.hero), [works]);
   const featuredWorks = useMemo(() => works.filter((w) => w.featured && !w.hero).slice(0, 2), [works]);
+  const allVideos = useMemo(() => works.filter((w) => w.videoUrl), [works]);
 
   // 竖屏视频作品：取前6个展示
   const portraitWorks = useMemo(
@@ -109,30 +111,24 @@ export default function Home() {
             </div>
 
             <div className="space-y-6">
-              {heroWorks.map((work) => {
-                const isPhoto = work.hasPhoto && !work.videoUrl;
-                return (
-                  <FeaturedWork
-                    key={work.id}
-                    work={work}
-                    onClick={isPhoto ? setSelectedWork : undefined}
-                  />
-                );
-              })}
+              {heroWorks.map((work) => (
+                <FeaturedWork
+                  key={work.id}
+                  work={work}
+                  onClick={setSelectedWork}
+                />
+              ))}
             </div>
 
             {featuredWorks.length > 0 && (
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featuredWorks.map((work) => {
-                  const isPhoto = work.hasPhoto && !work.videoUrl;
-                  return (
-                    <FeaturedWork
-                      key={work.id}
-                      work={work}
-                      onClick={isPhoto ? setSelectedWork : undefined}
-                    />
-                  );
-                })}
+                {featuredWorks.map((work) => (
+                  <FeaturedWork
+                    key={work.id}
+                    work={work}
+                    onClick={setSelectedWork}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -167,7 +163,7 @@ export default function Home() {
                   className="animate-fade-in"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <WorkCard work={work} from="video" />
+                  <WorkCard work={work} from="video" onClick={setSelectedWork} />
                 </div>
               ))}
             </div>
@@ -214,9 +210,17 @@ export default function Home() {
         </section>
       )}
 
-      {/* 照片弹窗 */}
-      {selectedWork && (
+      {/* 弹窗：照片 → PhotoModal，视频 → VideoModal */}
+      {selectedWork && !selectedWork.videoUrl && (
         <PhotoModal work={selectedWork} onClose={() => setSelectedWork(null)} />
+      )}
+      {selectedWork && selectedWork.videoUrl && (
+        <VideoModal
+          work={selectedWork}
+          allVideos={allVideos}
+          onClose={() => setSelectedWork(null)}
+          onNavigate={setSelectedWork}
+        />
       )}
     </>
   );

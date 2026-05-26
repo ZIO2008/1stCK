@@ -4,6 +4,7 @@ import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP, type WorkType } from '@/types';
 import type { Work } from '@/types';
 import WorkCard from '@/components/WorkCard';
+import VideoModal from '@/components/VideoModal';
 import { cn } from '@/lib/utils';
 
 /* ─── 常量 ─────────────────────────────────────────── */
@@ -41,6 +42,9 @@ export default function Video() {
 
   /* ─── 响应式列数 ─────────────────────── */
   const [columnCount, setColumnCount] = useState(3);
+
+  /* ─── 弹窗状态 ───────────────────────── */
+  const [selectedWork, setSelectedWork] = useState<Work | null>(null);
 
   useEffect(() => {
     function handleResize() {
@@ -221,7 +225,7 @@ export default function Video() {
                 style={{ minWidth: 0 }}
               >
                 {col.map((work) => (
-                  <WorkCard key={work.id} work={work} from="video" />
+                  <WorkCard key={work.id} work={work} from="video" onClick={setSelectedWork} />
                 ))}
               </div>
             ))}
@@ -240,6 +244,16 @@ export default function Video() {
           </p>
         </div>
       </div>
+
+      {/* 视频弹窗 */}
+      {selectedWork && (
+        <VideoModal
+          work={selectedWork}
+          allVideos={works.filter((w) => w.videoUrl)}
+          onClose={() => setSelectedWork(null)}
+          onNavigate={setSelectedWork}
+        />
+      )}
     </div>
   );
 }
