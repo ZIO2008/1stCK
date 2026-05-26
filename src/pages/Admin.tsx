@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useWorks } from '@/context/WorksContext';
 import { WORK_TYPE_MAP } from '@/types';
 import type { Work, WorkType, Story } from '@/types';
@@ -32,6 +32,7 @@ export default function Admin() {
   const [creditName, setCreditName] = useState('');
   const [processImgInput, setProcessImgInput] = useState('');
   const [saved, setSaved] = useState(false);
+  const [tabFilter, setTabFilter] = useState<'all' | 'photo' | 'video'>('all');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ---- Navigation ----
@@ -42,6 +43,20 @@ export default function Admin() {
   function generateId() {
     return 'work-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
   }
+
+  // ---- Tab filtering ----
+  const filteredWorks = useMemo(() => {
+    if (tabFilter === 'all') return works;
+    if (tabFilter === 'photo') return works.filter((w) => w.hasPhoto && !w.videoUrl);
+    if (tabFilter === 'video') return works.filter((w) => w.videoUrl);
+    return works;
+  }, [works, tabFilter]);
+
+  const tabCounts = useMemo(() => ({
+    all: works.length,
+    photo: works.filter((w) => w.hasPhoto && !w.videoUrl).length,
+    video: works.filter((w) => w.videoUrl).length,
+  }), [works]);
 
   // ---- Field updates ----
   const set = (key: keyof Work, value: unknown) => setForm(f => ({ ...f, [key]: value }));
@@ -162,6 +177,30 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Tab 筛选：全部 / 照片 / 视频 */}
+        <div className="flex gap-2 mb-6">
+          {([
+            { key: 'all', label: '全部' },
+            { key: 'photo', label: '照片' },
+            { key: 'video', label: '视频' },
+          ] as const).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setTabFilter(tab.key)}
+              className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+                tabFilter === tab.key
+                  ? 'bg-mist-900 text-white'
+                  : 'bg-mist-50 text-mist-600 hover:bg-mist-100'
+              }`}
+            >
+              {tab.label}
+              <span className={`ml-1.5 text-xs ${tabFilter === tab.key ? 'text-white/60' : 'text-mist-400'}`}>
+                ({tabCounts[tab.key]})
+              </span>
+            </button>
+          ))}
+        </div>
+
         {/* Import */}
         <div className="mb-8 p-4 bg-mist-50 rounded-lg">
           <label className="text-sm text-mist-600 mr-3">导入 JSON 数据：</label>
@@ -187,12 +226,16 @@ export default function Admin() {
 
         {/* Works list */}
         <div className="space-y-3">
-          {works.map((w) => (
+          {filteredWorks.map((w) => (
             <div key={w.id} className="flex items-center gap-4 p-4 bg-white border border-mist-100 rounded-lg hover:border-mist-200 transition-colors">
               <img src={w.coverImage} alt={w.title} className="w-20 h-12 object-cover rounded" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-mist-900 truncate">{w.title}</div>
-                <div className="text-xs text-mist-400 mt-0.5">{WORK_TYPE_MAP[w.type]?.label} · {w.date} · {w.duration}</div>
+                <div className="text-xs text-mist-400 mt-0.5">
+                  {WORK_TYPE_MAP[w.type]?.label}
+                  {w.videoUrl ? ' · 视频' : ' · 照片'}
+                  {' · '}{w.date}{w.duration ? ` · ${w.duration}` : ''}
+                </div>
               </div>
               <div className="flex gap-2 shrink-0">
                 <Link to={`/work/${w.id}`} target="_blank" className="px-3 py-1.5 text-xs border border-mist-200 rounded hover:bg-mist-50 transition-colors">
@@ -207,7 +250,7 @@ export default function Admin() {
               </div>
             </div>
           ))}
-          {works.length === 0 && (
+          {filteredWorks.length === 0 && (
             <div className="text-center py-12 text-mist-400">
               还没有作品，点击右上角「新增作品」开始
             </div>

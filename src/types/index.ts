@@ -55,7 +55,7 @@ export interface Work {
   story: Story;
   /** 制作名单 */
   credits: Credit[];
-  /** 幕后/过程图片 (Unsplash 占位) */
+  /** 幕后/过程图片 */
   processImages: string[];
   /** 是否为组图作品（多图集） */
   isGroup?: boolean;

@@ -37,9 +37,6 @@ export default function StorySection({ title, subtitle, children, image }: Story
               className="w-full h-auto object-cover"
               loading="lazy"
             />
-            <p className="mt-2 text-xs text-mist-400 font-mono">
-              Image: Unsplash (占位，可替换为真实幕后素材)
-            </p>
           </div>
         )}
       </div>

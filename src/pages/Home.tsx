@@ -15,13 +15,13 @@ export default function Home() {
 
   // 竖屏视频作品：取前6个展示
   const portraitWorks = useMemo(
-    () => works.filter((w) => w.orientation === 'portrait').slice(0, 6),
+    () => works.filter((w) => w.orientation === 'portrait' && w.videoUrl).slice(0, 6),
     [works]
   );
 
   // 照片作品（仅横版，最多4张）
   const photoWorks = useMemo(
-    () => works.filter((w) => w.hasPhoto && w.orientation === 'landscape').slice(0, 4),
+    () => works.filter((w) => w.hasPhoto && !w.videoUrl && w.orientation === 'landscape').slice(0, 4),
     [works]
   );
 

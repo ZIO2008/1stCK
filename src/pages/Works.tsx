@@ -32,7 +32,7 @@ export default function Works() {
   }, []);
 
   /* ─── 过滤 ─────────────────────────────── */
-  const photoWorks = useMemo(() => works.filter((w) => w.hasPhoto), [works]);
+  const photoWorks = useMemo(() => works.filter((w) => w.hasPhoto && !w.videoUrl), [works]);
 
   const filteredWorks = useMemo(() => {
     let result = photoWorks;

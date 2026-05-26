@@ -61,7 +61,7 @@ export default function Video() {
 
   /* ─── 过滤 ─────────────────────────────── */
   const filteredWorks = useMemo(() => {
-    let result = works;
+    let result = works.filter((w) => w.videoUrl);
 
     if (orientation !== 'all') {
       result = result.filter((w) => w.orientation === orientation);
@@ -94,9 +94,10 @@ export default function Video() {
 
   /* ─── 统计 ─────────────────────────────── */
   const typeCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: works.length };
+    const videoWorks = works.filter((w) => w.videoUrl);
+    const counts: Record<string, number> = { all: videoWorks.length };
     for (const t of WORK_TYPES) {
-      counts[t] = works.filter((w) => w.type === t).length;
+      counts[t] = videoWorks.filter((w) => w.type === t).length;
     }
     return counts;
   }, [works]);
