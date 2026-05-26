@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useWorks } from '@/context/WorksContext';
 import type { WorkType } from '@/types';
+import type { Work } from '@/types';
 import { WORK_TYPE_MAP } from '@/types';
 import WorkCard from '@/components/WorkCard';
 import { cn } from '@/lib/utils';
@@ -15,8 +16,43 @@ const ORIENTATION_OPTIONS = [
 
 const WORK_TYPES = Object.keys(WORK_TYPE_MAP) as WorkType[];
 
+/* ─── 瀑布流分列算法 ────────────────────────────────── */
+function distributeToColumns(works: Work[], columnCount: number): Work[][] {
+  if (columnCount <= 1) return [works];
+
+  const columns: Work[][] = Array.from({ length: columnCount }, () => []);
+  const heights: number[] = Array(columnCount).fill(0);
+
+  for (const work of works) {
+    const isPortrait = work.orientation === 'portrait';
+    const estimatedHeight = isPortrait ? 1.33 : 1;
+
+    const shortestCol = heights.indexOf(Math.min(...heights));
+    columns[shortestCol].push(work);
+    heights[shortestCol] += estimatedHeight;
+  }
+
+  return columns;
+}
+
 export default function Works() {
   const { works } = useWorks();
+
+  /* ─── 响应式列数 ─────────────────────── */
+  const [columnCount, setColumnCount] = useState(3);
+
+  useEffect(() => {
+    function handleResize() {
+      const w = window.innerWidth;
+      if (w < 640) setColumnCount(1);
+      else if (w < 1024) setColumnCount(2);
+      else setColumnCount(3);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [search, setSearch] = useState('');
   const [orientation, setOrientation] = useState<string>('all');
   const [activeType, setActiveType] = useState<string>('all');
@@ -59,6 +95,12 @@ export default function Works() {
 
     return result;
   }, [photoWorks, orientation, activeType, search]);
+
+  /* ─── 分列 ─────────────────────────────── */
+  const columns = useMemo(
+    () => distributeToColumns(filteredWorks, columnCount),
+    [filteredWorks, columnCount],
+  );
 
   /* ─── 统计 ─────────────────────────────── */
   const typeCounts = useMemo(() => {
@@ -159,7 +201,7 @@ export default function Works() {
         </div>
       </div>
 
-      {/* ── 网格画廊 ────────────────────── */}
+      {/* ── 瀑布流画廊（JS 分列，填满不留白）── */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8">
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-stone-300">
@@ -178,19 +220,18 @@ export default function Works() {
           </div>
         ) : (
           <div
-            className={cn(
-              'grid gap-5',
-              orientation === 'portrait'
-                ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-            )}
+            className="flex gap-5"
+            style={{ alignItems: 'flex-start' }}
           >
-            {filteredWorks.map((work, i) => (
+            {columns.map((col, ci) => (
               <div
-                key={work.id}
-                style={{ animationDelay: `${i * 50}ms` }}
+                key={ci}
+                className="flex-1 flex flex-col gap-5"
+                style={{ minWidth: 0 }}
               >
-                <WorkCard work={work} from="works" />
+                {col.map((work) => (
+                  <WorkCard key={work.id} work={work} from="works" />
+                ))}
               </div>
             ))}
           </div>
