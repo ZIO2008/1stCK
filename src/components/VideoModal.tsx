@@ -19,11 +19,6 @@ export default function VideoModal({ work, allVideos, onClose, onNavigate }: Vid
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < allVideos.length - 1;
 
-  // 点击遮罩关闭
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   // 键盘支持
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -37,6 +32,11 @@ export default function VideoModal({ work, allVideos, onClose, onNavigate }: Vid
     },
     [onClose, onNavigate, allVideos, currentIndex, hasPrev, hasNext],
   );
+
+  // 内容区点击：只有点击内容容器自身（即边距空白区域）才关闭
+  const handleContentClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose();
+  };
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -62,10 +62,7 @@ export default function VideoModal({ work, allVideos, onClose, onNavigate }: Vid
     .slice(0, 9);
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/92 flex flex-col animate-fade-in"
-      onClick={handleOverlayClick}
-    >
+    <div className="fixed inset-0 z-50 bg-black/92 flex flex-col animate-fade-in">
       {/* ── 关闭按钮 ── */}
       <button
         onClick={onClose}
@@ -100,7 +97,7 @@ export default function VideoModal({ work, allVideos, onClose, onNavigate }: Vid
       {/* ── 滚动内容 ── */}
       <div
         className="flex-1 overflow-y-auto overflow-x-hidden"
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleContentClick}
       >
         {/* 视频播放器 */}
         <div className="w-full max-w-[900px] mx-auto pt-16 md:pt-20 px-4 md:px-6">
