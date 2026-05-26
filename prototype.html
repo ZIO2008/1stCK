@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目页重构小样 | 登山路·影像创作</title>
+<style>
+/* ====== Reset & Base ====== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f4f0; color: #2c2c2c; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+
+/* ====== Color Tokens ====== */
+:root {
+  --bg-warm: #f5f4f0;
+  --bg-dark: #1a1a1a;
+  --text-primary: #2c2c2c;
+  --text-secondary: #777;
+  --text-on-dark: rgba(255,255,255,0.85);
+  --text-on-dark-dim: rgba(255,255,255,0.45);
+  --border: #e5e0d8;
+  --accent: #c49a2c;
+}
+
+/* ====== Typography ====== */
+.font-serif { font-family: 'Georgia', 'Noto Serif SC', 'STSong', serif; }
+.font-mono { font-family: 'SF Mono', 'Consolas', monospace; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.text-4xl { font-size: 2.25rem; }
+.text-5xl { font-size: 3rem; }
+.text-xl { font-size: 1.25rem; }
+.text-lg { font-size: 1.125rem; }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+
+/* ====== Layout ====== */
+.max-w-screen { max-width: 1400px; margin: 0 auto; }
+.max-w-narrow { max-width: 720px; margin: 0 auto; }
+.max-w-mid { max-width: 960px; margin: 0 auto; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+.py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+.py-32 { padding-top: 8rem; padding-bottom: 8rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-10 { margin-bottom: 2.5rem; }
+.mb-16 { margin-bottom: 4rem; }
+.mt-4 { margin-top: 1rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-10 { gap: 2.5rem; }
+
+/* ====== Flex & Grid ====== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-baseline { align-items: baseline; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ====== Components ====== */
+
+/* Hero - video player area */
+.video-hero {
+  width: 100%;
+  background: #000;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.video-hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.video-hero-placeholder .play-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+.video-hero-placeholder .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+.video-hero-placeholder .play-triangle {
+  width: 0; height: 0;
+  border-left: 24px solid white;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  margin-left: 5px;
+}
+.video-hero-placeholder .time-badge {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+/* Photo hero */
+.photo-hero {
+  width: 100%;
+  height: 85vh;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+.photo-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4rem 3rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.photo-hero-overlay h1 {
+  color: #fff;
+  font-size: 3rem;
+  font-family: Georgia, 'Noto Serif SC', serif;
+  margin-bottom: 0.5rem;
+}
+.photo-hero-overlay .meta {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  font-family: monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Video info bar */
+.video-info-bar {
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+.video-info-bar .inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2rem;
+}
+.video-info-bar h1 {
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  width: 100%;
+}
+.video-info-bar .info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+.video-info-bar .type-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Visual Text Block (image + short text) */
+.visual-text-block { }
+.visual-text-block .image-full {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.visual-text-block .caption {
+  max-width: 720px;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Section header */
+.section-header {
+  max-width: 720px;
+  margin: 0 auto 3rem;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+.section-header .label {
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.section-header h2 {
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 1.75rem;
+  color: var(--text-primary);
+}
+
+/* Dark section */
+.dark-section {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+}
+.dark-section .credit-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.dark-section .credit-row:last-child { border-bottom: none; }
+.dark-section .credit-role {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-on-dark-dim);
+  width: 120px;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+.dark-section .credit-name {
+  font-size: 0.9rem;
+}
+
+/* Process image grid */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.process-grid .process-img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Photo waterfall */
+.photo-waterfall {
+  columns: 4;
+  column-gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.photo-waterfall .waterfall-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.photo-waterfall .waterfall-item:hover { transform: scale(1.01); }
+.photo-waterfall .waterfall-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 1024px) { .photo-waterfall { columns: 3; } }
+@media (max-width: 768px) { .photo-waterfall { columns: 2; } }
+@media (max-width: 480px) { .photo-waterfall { columns: 1; } }
+
+/* Description block */
+.desc-block {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 1.2rem;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+/* Meta grid */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.meta-item label {
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.meta-item span {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+/* Tag pills */
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+.tag-pill {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+/* Separator */
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.separator .line { flex: 1; height: 1px; background: var(--border); }
+.separator .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Related works carousel */
+.related-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0 1.5rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.related-scroll::-webkit-scrollbar { display: none; }
+.related-card {
+  flex: 0 0 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+.related-card:hover { transform: translateY(-4px); }
+.related-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.related-card .info {
+  padding: 1rem;
+}
+.related-card h3 {
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.related-card .type {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+/* ====== Page header ====== */
+.page-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  background: rgba(245, 244, 240, 0.8);
+  border-bottom: 1px solid var(--border);
+}
+.page-header .logo {
+  font-family: Georgia, 'Noto Serif SC', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.page-header nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  margin-left: 1.5rem;
+  font-family: monospace;
+}
+
+/* ====== Layout separator between demos ====== */
+.demo-separator {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: var(--bg-warm);
+}
+.demo-separator .divider {
+  max-width: 200px;
+  margin: 0 auto;
+  height: 1px;
+  background: var(--border);
+}
+.demo-separator .demo-label {
+  margin-top: 1.5rem;
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* Photos page specific */
+.bg-white { background: #fff; }
+
+/* Placeholder for images */
+.img-placeholder {
+  background: linear-gradient(135deg, #e8e4dc 0%, #d5cfc4 50%, #c8bfb0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================== -->
+<!-- HEADER -->
+<!-- =========================================== -->
+<header class="page-header">
+  <a href="#" class="logo">登山路 · 影像创作</a>
+  <nav>
+    <a href="#">作品</a>
+    <a href="#">视频</a>
+    <a href="#">关于</a>
+  </nav>
+</header>
+
+<!-- =========================================== -->
+<!-- DEMO 1: 视频作品页 — "在梅里雪山" -->
+<!-- =========================================== -->
+<div style="padding-top: 56px;">
+
+  <!-- ★ 视频播放器——页面第一屏就是作品本身 -->
+  <div class="video-hero">
+    <div class="video-hero-placeholder">
+      <div class="play-btn">
+        <div class="play-triangle"></div>
+      </div>
+      <div class="time-badge">0:00 / 4:32</div>
+      <div style="color:rgba(255,255,255,0.25);font-size:0.75rem;margin-top:0.5rem;">
+        在梅里雪山，我等了三天的日照金山
+      </div>
+    </div>
+  </div>
+
+  <!-- 信息栏：标题、标签、时长、年份 -->
+  <div class="video-info-bar">
+    <div class="inner">
+      <h1>在梅里雪山，我等了三天的日照金山</h1>
+      <div class="info-tags">
+        <span class="type-badge">旅行影像</span>
+        <span>时长 4:32</span>
+        <span>2028 / 11</span>
+        <span>器材 Sony FX6 + DJI Mavic 3</span>
+        <span style="color:#c49a2c;">#风光 #登山 #调色</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ★ 图+文案交替叙事：而非"背景→思考→过程→成片" -->
+  <section class="py-32">
+    <!-- 过程图 1 + 短文案 -->
+    <div class="visual-text-block mb-16">
+      <img 
+        src="./images/Filmmaker_in_misty_mountain_te_2026-05-25T03-25-12.png"
+        class="image-full"
+        onerror="this.parentElement.style.display='none'"
+        alt="飞来寺凌晨架机位" />
+      <div class="caption">
+        2028年深秋，我在飞来寺驻扎了十二天。前六天，卡瓦格博全程被云雾笼罩，每天早上五点爬起来架机器，在零下十五度的观景台等到九点，然后收工。
+      </div>
+    </div>
+
+    <!-- 过程图 2 + 短文案 -->
+    <div class="visual-text-block">
+      <img 
+        src="./images/Mountain_filmmaker_shooting_on_2026-05-25T03-19-57.png"
+        class="image-full"
+        onerror="this.parentElement.style.display='none'"
+        alt="雪山日出拍摄" />
+      <div class="caption">
+        第七天清晨 6:47，第一缕光线触到峰顶。金色从峰顶开始往下流淌，像有人从天上倾倒融化的黄金。那两分十七秒，摄影指导老徐说是他从业二十年最幸运的三分钟。
+      </div>
+    </div>
+  </section>
+
+  <!-- 中间叙述 —— 居中窄栏 -->
+  <section class="py-16" style="background:#fff;">
+    <div class="desc-block">
+      我接这个案子的原因很简单：传统的风光片看了100部等于看了1部。<br>
+      观众知道雪山很美，但不会觉得自己和它有什么关系。<br><br>
+      所以我放弃了上帝视角——镜头高度保持在1.6米，手持微晃但不抖。<br>
+      不追求完美构图，追求那种"我正走在这条路上"的沉浸感。
+    </div>
+  </section>
+
+  <!-- 更多过程图 -->
+  <section class="py-32">
+    <div class="process-grid">
+      <img src="./images/Close_up_of_filmmaker_reviewin_2026-05-25T03-20-44.png" 
+           class="process-img"
+           onerror="this.style.display='none'" />
+      <img src="./images/Video_editor_working_at_laptop_2026-05-25T03-19-12.png"
+           class="process-img"
+           onerror="this.style.display='none'" />
+    </div>
+    <div class="visual-text-block" style="margin-top: 3rem;">
+      <div class="caption">
+        后期在 DaVinci Resolve 中完成。高光暖金色，阴影偏冷蓝。暗部保留细节而非压黑，让雪山有"发光"感而非"被打光"感。
+      </div>
+    </div>
+  </section>
+
+  <!-- ★ 制作名单：深色背景区分 -->
+  <section class="dark-section py-24">
+    <div class="max-w-narrow px-6">
+      <div class="section-header" style="color:white;">
+        <div class="label" style="color:var(--text-on-dark-dim);">Credits</div>
+        <h2 style="color:var(--text-on-dark);">制作名单</h2>
+      </div>
+      <div style="margin-top:2rem;">
+        <div class="credit-row">
+          <span class="credit-role">导演 / 摄影 / 剪辑</span>
+          <span class="credit-name">登山路</span>
+        </div>
+        <div class="credit-row">
+          <span class="credit-role">摄影指导</span>
+          <span class="credit-name">老徐</span>
+        </div>
+        <div class="credit-row">
+          <span class="credit-role">调色</span>
+          <span class="credit-name">登山路</span>
+        </div>
+        <div class="credit-row">
+          <span class="credit-role">委托方</span>
+          <span class="credit-name">迪庆州文化和旅游局</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 相关作品：横向滚动 -->
+  <section class="py-24" style="background:var(--bg-warm);">
+    <div class="max-w-screen">
+      <div class="section-header mb-8">
+        <div class="label">Related</div>
+        <h2>相关作品</h2>
+      </div>
+      <div class="related-scroll">
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">城市之巅</div>
+          <div class="info"><h3>城市之巅</h3><div class="type">宣传片</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">贡嘎转山</div>
+          <div class="info"><h3>贡嘎转山</h3><div class="type">旅行</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">川西14天</div>
+          <div class="info"><h3>川西14天</h3><div class="type">旅行</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">非遗·竹编</div>
+          <div class="info"><h3>非遗·竹编</h3><div class="type">纪实</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- =========================================== -->
+<!-- 分隔 -->
+<!-- =========================================== -->
+<div class="demo-separator">
+  <div class="divider"></div>
+  <div class="demo-label">↓ 照片作品页布局 ↓</div>
+  <div class="divider" style="margin-top:1.5rem;"></div>
+</div>
+
+<!-- =========================================== -->
+<!-- DEMO 2: 照片作品页 — "花间集" -->
+<!-- =========================================== -->
+<div>
+
+  <!-- 封面全幅 -->
+  <div class="photo-hero">
+    <img src="./images/Editing_flower_market_footage__2026-05-25T03-43-56.png"
+         onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#2d1b69,#1a1a3e)';" />
+    <div class="photo-hero-overlay">
+      <div class="meta">街拍 / Photography · 2028 / 04 · 广州</div>
+      <h1>花间集</h1>
+    </div>
+  </div>
+
+  <!-- ★ 组图瀑布流——封面后第一内容 -->
+  <section class="py-16 bg-white">
+    <div class="section-header mb-10">
+      <div class="label">Gallery</div>
+      <h2>组图</h2>
+    </div>
+    <div class="photo-waterfall">
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:3/4;">组图 1</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:2/3;">组图 2</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:4/5;">组图 3</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:3/4;">组图 4</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:16/9;">组图 5</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:3/4;">组图 6</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:2/3;">组图 7</div></div>
+      <div class="waterfall-item"><div class="img-placeholder" style="aspect-ratio:4/5;">组图 8</div></div>
+    </div>
+  </section>
+
+  <!-- 描述文字 -->
+  <section class="py-24" style="background:var(--bg-warm);">
+    <div class="desc-block">
+      广州岭南花卉市场。<br>
+      这里凌晨三点就开始忙碌——花农、批发商、花店老板、婚礼策划师，<br>
+      各色人物在潮湿的空气中穿梭。<br><br>
+      我在这里蹲了三个凌晨，记录了花与人最真实的交汇瞬间。
+    </div>
+
+    <div class="separator" style="margin-top: 3rem; margin-bottom: 3rem;">
+      <div class="line"></div>
+      <div class="dot"></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- EXIF & Meta -->
+    <div class="meta-grid">
+      <div class="meta-item"><label>日期</label><span>2028 / 04</span></div>
+      <div class="meta-item"><label>地点</label><span>广州</span></div>
+      <div class="meta-item"><label>器材</label><span>Leica M10-P</span></div>
+      <div class="meta-item"><label>镜头</label><span>Summilux 35mm f/1.4</span></div>
+    </div>
+
+    <div style="margin-top: 2rem;" class="tag-pills">
+      <span class="tag-pill">#街拍</span>
+      <span class="tag-pill">#纪实</span>
+      <span class="tag-pill">#黑白</span>
+      <span class="tag-pill">#光影</span>
+    </div>
+  </section>
+
+  <!-- 幕后过程图 -->
+  <section class="py-24 bg-white">
+    <div class="section-header mb-10">
+      <div class="label">Behind the Scenes</div>
+      <h2>幕后</h2>
+    </div>
+    <div class="process-grid">
+      <img src="./images/Filmmaker_shooting_at_Guangzho_2026-05-25T03-42-48.png"
+           class="process-img"
+           onerror="this.style.display='none'" />
+      <img src="./images/Filmmaker_shooting_discretely__2026-05-25T03-44-52.png"
+           class="process-img"
+           onerror="this.style.display='none'" />
+    </div>
+  </section>
+
+  <!-- 制作名单 -->
+  <section class="dark-section py-24">
+    <div class="max-w-narrow px-6">
+      <div class="section-header" style="color:white;">
+        <div class="label" style="color:var(--text-on-dark-dim);">Credits</div>
+        <h2 style="color:var(--text-on-dark);">制作名单</h2>
+      </div>
+      <div style="margin-top:2rem;">
+        <div class="credit-row">
+          <span class="credit-role">摄影 / 后期</span>
+          <span class="credit-name">登山路</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 更多照片 -->
+  <section class="py-24" style="background:var(--bg-warm);">
+    <div class="max-w-screen">
+      <div class="section-header mb-8">
+        <div class="label">More</div>
+        <h2>更多照片</h2>
+      </div>
+      <div class="related-scroll">
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">潮汐画布</div>
+          <div class="info"><h3>潮汐画布</h3><div class="type">风光</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">若尔盖的清晨</div>
+          <div class="info"><h3>若尔盖的清晨</h3><div class="type">风光</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">街巷光影</div>
+          <div class="info"><h3>街巷光影</h3><div class="type">街拍</div></div>
+        </div>
+        <div class="related-card">
+          <div class="img-placeholder" style="aspect-ratio:16/10;">建筑的诗学</div>
+          <div class="info"><h3>建筑的诗学</h3><div class="type">建筑</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

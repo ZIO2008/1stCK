@@ -19,6 +19,12 @@ const emptyWork: Work = {
   story: emptyStory,
   credits: [],
   processImages: [],
+  location: '',
+  hasPhoto: false,
+  isGroup: false,
+  photoCoverImage: '',
+  stills: [],
+  exif: {},
 };
 
 export default function Admin() {
@@ -31,6 +37,7 @@ export default function Admin() {
   const [creditRole, setCreditRole] = useState('');
   const [creditName, setCreditName] = useState('');
   const [processImgInput, setProcessImgInput] = useState('');
+  const [stillsInput, setStillsInput] = useState('');
   const [saved, setSaved] = useState(false);
   const [tabFilter, setTabFilter] = useState<'all' | 'photo' | 'video'>('all');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +68,9 @@ export default function Admin() {
   // ---- Field updates ----
   const set = (key: keyof Work, value: unknown) => setForm(f => ({ ...f, [key]: value }));
   const setStory = (key: keyof Story, value: string) => setForm(f => ({ ...f, story: { ...f.story, [key]: value } }));
+  const setExif = (key: keyof NonNullable<Work['exif']>, value: string) => {
+    setForm(f => ({ ...f, exif: { ...(f.exif || {}), [key]: value || undefined } }));
+  };
   const toggleTag = (tag: string) => {
     setForm(f => ({
       ...f,
@@ -86,6 +96,16 @@ export default function Admin() {
 
   const removeProcessImage = (idx: number) => {
     setForm(f => ({ ...f, processImages: f.processImages.filter((_, i) => i !== idx) }));
+  };
+
+  const addStill = () => {
+    if (!stillsInput.trim()) return;
+    setForm(f => ({ ...f, stills: [...(f.stills || []), stillsInput.trim()] }));
+    setStillsInput('');
+  };
+
+  const removeStill = (idx: number) => {
+    setForm(f => ({ ...f, stills: (f.stills || []).filter((_, i) => i !== idx) }));
   };
 
   // ---- Save ----
@@ -125,14 +145,109 @@ export default function Admin() {
 
   // ---- Available images gallery ----
   const availableImages = [
-    './images/bg-hero.png', './images/bg-about.png',
-    './images/cover-meili-snow-mountain.png', './images/cover-city-peak-shenzhen.png',
-    './images/cover-gongga-trek.png', './images/cover-product-tech.png',
-    './images/cover-traveler-mountain.png', './images/cover-documentary-village.png',
-    './images/cover-concert-music-video.png', './images/cover-experimental-neon.png',
-    './images/cover-wedding-cinematic.png', './images/cover-motion-graphics.png',
-    './images/process-meili-1.png', './images/process-meili-2.png',
-    './images/process-shenzhen-1.png', './images/process-shenzhen-2.png',
+    './images/bg-about.png',
+    './images/bg-hero.png',
+    './images/cover-city-peak-shenzhen.png',
+    './images/cover-color-grading.png',
+    './images/cover-concert-music-video.png',
+    './images/cover-documentary-village.png',
+    './images/cover-experimental-neon.png',
+    './images/cover-gongga-trek.png',
+    './images/cover-meili-snow-mountain.png',
+    './images/cover-motion-graphics.png',
+    './images/cover-movie-intro.png',
+    './images/cover-product-tech.png',
+    './images/cover-tea-plantation-brand.png',
+    './images/cover-traveler-mountain.png',
+    './images/cover-wedding-cinematic.png',
+    './images/photo-cover-chengdu.png',
+    './images/photo-cover-flowers.png',
+    './images/photo-cover-geometry.png',
+    './images/photo-cover-gongga.png',
+    './images/photo-cover-hiker.png',
+    './images/photo-cover-hongyadong.png',
+    './images/photo-cover-kids.png',
+    './images/photo-cover-meili.png',
+    './images/photo-cover-mirror.png',
+    './images/photo-cover-ruoergai.png',
+    './images/photo-cover-shenzhen.png',
+    './images/photo-cover-teahouse.png',
+    './images/photo-cover-wedding.png',
+    './images/photo-cover-xiapu.png',
+    './images/photo-still-flowers-1.png',
+    './images/photo-still-flowers-2.png',
+    './images/photo-still-flowers-3.png',
+    './images/photo-still-flowers-4.png',
+    './images/photo-still-ruoergai-1.png',
+    './images/photo-still-ruoergai-2.png',
+    './images/photo-still-ruoergai-3.png',
+    './images/photo-still-ruoergai-4.png',
+    './images/photo-still-xiapu-1.png',
+    './images/photo-still-xiapu-2.png',
+    './images/photo-still-xiapu-3.png',
+    './images/photo-still-xiapu-4.png',
+    './images/portrait-cover-ballet.png',
+    './images/portrait-cover-bamboo.png',
+    './images/portrait-cover-chengdu.png',
+    './images/portrait-cover-fishing.png',
+    './images/portrait-cover-flower.png',
+    './images/portrait-cover-guangzhou.png',
+    './images/portrait-cover-hiker.png',
+    './images/portrait-cover-subway.png',
+    './images/portrait-cover-surf.png',
+    './images/portrait-cover-tea.png',
+    './images/process-ballet-1.png',
+    './images/process-ballet-2.png',
+    './images/process-bamboo-1.png',
+    './images/process-bamboo-2.png',
+    './images/process-chengdu-1.png',
+    './images/process-chengdu-2.png',
+    './images/process-chuanxi-1.png',
+    './images/process-chuanxi-2.png',
+    './images/process-echo-1.png',
+    './images/process-echo-2.png',
+    './images/process-fishing-1.png',
+    './images/process-fishing-2.png',
+    './images/process-flower-1.png',
+    './images/process-flower-2.png',
+    './images/process-flowers-1.png',
+    './images/process-flowers-2.png',
+    './images/process-flux-1.png',
+    './images/process-flux-2.png',
+    './images/process-geometry-1.png',
+    './images/process-geometry-2.png',
+    './images/process-gongga-1.png',
+    './images/process-gongga-2.png',
+    './images/process-guangzhou-1.png',
+    './images/process-guangzhou-2.png',
+    './images/process-heritage-1.png',
+    './images/process-heritage-2.png',
+    './images/process-hiker-1.png',
+    './images/process-hiker-2.png',
+    './images/process-hongyadong-1.png',
+    './images/process-hongyadong-2.png',
+    './images/process-jewelry-1.png',
+    './images/process-jewelry-2.png',
+    './images/process-meili-1.png',
+    './images/process-meili-2.png',
+    './images/process-mirror-1.png',
+    './images/process-mirror-2.png',
+    './images/process-shenzhen-1.png',
+    './images/process-shenzhen-2.png',
+    './images/process-solitude-1.png',
+    './images/process-solitude-2.png',
+    './images/process-subway-1.png',
+    './images/process-subway-2.png',
+    './images/process-surf-1.png',
+    './images/process-surf-2.png',
+    './images/process-tea-1.png',
+    './images/process-tea-2.png',
+    './images/process-teahouse-1.png',
+    './images/process-teahouse-2.png',
+    './images/process-wedding-1.png',
+    './images/process-wedding-2.png',
+    './images/process-xiapu-1.png',
+    './images/process-xiapu-2.png',
   ];
 
   // All known tags
@@ -233,8 +348,9 @@ export default function Admin() {
                 <div className="font-medium text-mist-900 truncate">{w.title}</div>
                 <div className="text-xs text-mist-400 mt-0.5">
                   {WORK_TYPE_MAP[w.type]?.label}
-                  {w.videoUrl ? ' · 视频' : ' · 照片'}
+                  {w.videoUrl ? ' · 视频' : w.hasPhoto ? ' · 照片' : ''}
                   {' · '}{w.date}{w.duration ? ` · ${w.duration}` : ''}
+                  {w.orientation ? ` · ${w.orientation === 'portrait' ? '竖屏' : '横屏'}` : ''}
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
@@ -314,6 +430,22 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Location + Orientation */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-mist-700 mb-1">拍摄地点</label>
+            <input value={form.location || ''} onChange={e => set('location', e.target.value)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" placeholder="如 重庆·洪崖洞" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-mist-700 mb-1">画面方向</label>
+            <select value={form.orientation || ''} onChange={e => set('orientation', e.target.value || undefined)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm">
+              <option value="">未设置</option>
+              <option value="landscape">横屏 (16:9)</option>
+              <option value="portrait">竖屏 (3:4)</option>
+            </select>
+          </div>
+        </div>
+
         {/* Type + Duration + Client */}
         <div className="grid grid-cols-3 gap-4">
           <div>
@@ -346,6 +478,18 @@ export default function Admin() {
           )}
         </div>
 
+        {/* Photo Cover Image */}
+        <div>
+          <label className="block text-sm font-medium text-mist-700 mb-1">
+            照片页封面图
+            <span className="text-mist-400 font-normal ml-1">(照片作品专用，与视频封面可不同)</span>
+          </label>
+          <input value={form.photoCoverImage || ''} onChange={e => set('photoCoverImage', e.target.value)} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm font-mono" placeholder="./images/photo-cover-xxx.png" />
+          {form.photoCoverImage && (
+            <img src={form.photoCoverImage} alt="照片封面预览" className="mt-2 w-48 h-27 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          )}
+        </div>
+
         {/* Video URL */}
         <div>
           <label className="block text-sm font-medium text-mist-700 mb-1">B站视频链接</label>
@@ -365,8 +509,8 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Featured / Hero toggles */}
-        <div className="flex gap-6">
+        {/* Featured / Hero / Photo / Group toggles */}
+        <div className="flex gap-6 flex-wrap">
           <label className="flex items-center gap-2 text-sm text-mist-700 cursor-pointer">
             <input type="checkbox" checked={form.featured || false} onChange={e => set('featured', e.target.checked)} className="rounded" />
             精选作品
@@ -374,6 +518,14 @@ export default function Admin() {
           <label className="flex items-center gap-2 text-sm text-mist-700 cursor-pointer">
             <input type="checkbox" checked={form.hero || false} onChange={e => set('hero', e.target.checked)} className="rounded" />
             Hero 展示
+          </label>
+          <label className="flex items-center gap-2 text-sm text-mist-700 cursor-pointer">
+            <input type="checkbox" checked={form.hasPhoto || false} onChange={e => set('hasPhoto', e.target.checked)} className="rounded" />
+            照片作品
+          </label>
+          <label className="flex items-center gap-2 text-sm text-mist-700 cursor-pointer">
+            <input type="checkbox" checked={form.isGroup || false} onChange={e => set('isGroup', e.target.checked)} className="rounded" />
+            组图作品
           </label>
         </div>
 
@@ -388,6 +540,40 @@ export default function Admin() {
               <textarea value={form.story?.[key] || ''} onChange={e => setStory(key, e.target.value)} rows={4} className="w-full px-4 py-2 border border-mist-200 rounded-lg focus:outline-none focus:border-mist-400 text-sm" />
             </div>
           ))}
+        </div>
+
+        {/* EXIF */}
+        <div className="border-t border-mist-100 pt-6">
+          <h2 className="font-serif text-lg text-mist-900 mb-4">
+            EXIF 参数
+            <span className="text-mist-400 text-sm font-normal ml-1">(摄影作品适用)</span>
+          </h2>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">机身</label>
+              <input value={form.exif?.camera || ''} onChange={e => setExif('camera', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 索尼 α7R V" />
+            </div>
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">镜头</label>
+              <input value={form.exif?.lens || ''} onChange={e => setExif('lens', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 FE 24-70mm F2.8 GM II" />
+            </div>
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">光圈</label>
+              <input value={form.exif?.aperture || ''} onChange={e => setExif('aperture', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 f/2.8" />
+            </div>
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">快门</label>
+              <input value={form.exif?.shutter || ''} onChange={e => setExif('shutter', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 1/250" />
+            </div>
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">ISO</label>
+              <input value={form.exif?.iso || ''} onChange={e => setExif('iso', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 100" />
+            </div>
+            <div>
+              <label className="block text-sm text-mist-600 mb-1">焦距</label>
+              <input value={form.exif?.focalLength || ''} onChange={e => setExif('focalLength', e.target.value)} className="w-full px-3 py-2 border border-mist-200 rounded-lg text-sm" placeholder="如 50mm" />
+            </div>
+          </div>
         </div>
 
         {/* Credits */}
@@ -425,11 +611,34 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Stills (组图内页) */}
+        <div className="border-t border-mist-100 pt-6">
+          <h2 className="font-serif text-lg text-mist-900 mb-4">
+            组图内页
+            <span className="text-mist-400 text-sm font-normal ml-1">(组图作品专用)</span>
+          </h2>
+          <div className="flex gap-2 mb-3">
+            <input value={stillsInput} onChange={e => setStillsInput(e.target.value)} className="flex-1 px-3 py-2 border border-mist-200 rounded-lg text-sm font-mono" placeholder="./images/photo-still-xxx.png" />
+            <button onClick={addStill} className="px-4 py-2 text-sm border border-mist-200 rounded-lg hover:bg-mist-50 transition-colors">添加</button>
+          </div>
+          <div className="flex gap-3 flex-wrap">
+            {(form.stills || []).map((img, i) => (
+              <div key={i} className="relative group">
+                <img src={img} alt="" className="w-24 h-16 object-cover rounded border" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <button onClick={() => removeStill(i)} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">x</button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Quick image gallery */}
         <div className="border-t border-mist-100 pt-6">
-          <h2 className="font-serif text-lg text-mist-900 mb-3">可用图片</h2>
+          <h2 className="font-serif text-lg text-mist-900 mb-3">
+            可用图片
+            <span className="text-mist-400 text-sm font-normal ml-1">({availableImages.length} 张，点击复制路径)</span>
+          </h2>
           <p className="text-xs text-mist-400 mb-3">点击图片复制路径到剪贴板，或拖入上方输入框</p>
-          <div className="grid grid-cols-8 gap-2">
+          <div className="grid grid-cols-8 gap-2 max-h-96 overflow-y-auto">
             {availableImages.map(img => (
               <button key={img} onClick={() => { navigator.clipboard.writeText(img); setProcessImgInput(img); }}
                 className="relative group" title={img}>
