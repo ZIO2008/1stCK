@@ -63,10 +63,10 @@ export default function WorkCard({ work, from }: WorkCardProps) {
             <span className="text-white/70 text-xs">{year}</span>
             <span className="w-1 h-1 rounded-full bg-white/40" />
             <span className="text-white/70 text-xs">{typeInfo.label}</span>
-            {work.duration && (
+            {work.gear && (
               <>
                 <span className="w-1 h-1 rounded-full bg-white/40" />
-                <span className="text-white/70 text-xs">{work.duration}</span>
+                <span className="text-white/70 text-xs truncate max-w-[120px]">{work.gear}</span>
               </>
             )}
           </div>
