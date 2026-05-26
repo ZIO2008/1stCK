@@ -4,6 +4,7 @@ import type { WorkType } from '@/types';
 import type { Work } from '@/types';
 import { WORK_TYPE_MAP } from '@/types';
 import WorkCard from '@/components/WorkCard';
+import PhotoModal from '@/components/PhotoModal';
 import { cn } from '@/lib/utils';
 import { Camera, Search, X } from 'lucide-react';
 
@@ -40,6 +41,9 @@ export default function Works() {
 
   /* ─── 响应式列数 ─────────────────────── */
   const [columnCount, setColumnCount] = useState(3);
+
+  /* ─── 弹窗状态 ───────────────────────── */
+  const [selectedWork, setSelectedWork] = useState<Work | null>(null);
 
   useEffect(() => {
     function handleResize() {
@@ -230,7 +234,7 @@ export default function Works() {
                 style={{ minWidth: 0 }}
               >
                 {col.map((work) => (
-                  <WorkCard key={work.id} work={work} from="works" />
+                  <WorkCard key={work.id} work={work} from="works" onClick={setSelectedWork} />
                 ))}
               </div>
             ))}
@@ -249,6 +253,11 @@ export default function Works() {
           </p>
         </div>
       </div>
+
+      {/* 照片弹窗 */}
+      {selectedWork && (
+        <PhotoModal work={selectedWork} onClose={() => setSelectedWork(null)} />
+      )}
     </div>
   );
 }

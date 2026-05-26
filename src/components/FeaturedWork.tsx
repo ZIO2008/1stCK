@@ -6,23 +6,23 @@ interface FeaturedWorkProps {
   work: Work;
   /** 来源标识（用于返回导航），自动推断 */
   from?: string;
+  /** 照片作品弹窗回调（传入后使用 div+onClick 代替 Link） */
+  onClick?: (work: Work) => void;
 }
 
 /**
  * 首页精选作品 —— 大图 + 标题 + 一行描述
  * 极度克制，不展示标签/类型/时长
  */
-export default function FeaturedWork({ work, from }: FeaturedWorkProps) {
+export default function FeaturedWork({ work, from, onClick }: FeaturedWorkProps) {
   const typeColor = WORK_TYPE_MAP[work.type].color;
   const isPhoto = work.hasPhoto && !work.videoUrl;
   const linkFrom = from || (isPhoto ? 'works' : 'video');
   const linkTo = `/work/${work.id}?from=${linkFrom}`;
 
-  return (
-    <Link
-      to={linkTo}
-      className="group block relative overflow-hidden rounded-2xl animate-fade-in"
-    >
+  // 共享内容
+  const featuredContent = (
+    <>
       <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">
         <img
           src={work.coverImage}
@@ -50,6 +50,27 @@ export default function FeaturedWork({ work, from }: FeaturedWorkProps) {
           {work.description}
         </p>
       </div>
+    </>
+  );
+
+  // 弹窗模式
+  if (onClick) {
+    return (
+      <div
+        className="group block relative overflow-hidden rounded-2xl animate-fade-in cursor-pointer"
+        onClick={() => onClick(work)}
+      >
+        {featuredContent}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      to={linkTo}
+      className="group block relative overflow-hidden rounded-2xl animate-fade-in"
+    >
+      {featuredContent}
     </Link>
   );
 }

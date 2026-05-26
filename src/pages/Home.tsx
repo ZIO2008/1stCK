@@ -2,13 +2,18 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, Camera } from 'lucide-react';
 import { useWorks } from '@/context/WorksContext';
+import type { Work } from '@/types';
 import ArtistStatement from '@/components/ArtistStatement';
 import FeaturedWork from '@/components/FeaturedWork';
 import WorkCard from '@/components/WorkCard';
+import PhotoModal from '@/components/PhotoModal';
 
 export default function Home() {
   const { works } = useWorks();
   const [scrolled, setScrolled] = useState(false);
+
+  /* ─── 弹窗状态 ───────────────────────── */
+  const [selectedWork, setSelectedWork] = useState<Work | null>(null);
 
   const heroWorks = useMemo(() => works.filter((w) => w.hero), [works]);
   const featuredWorks = useMemo(() => works.filter((w) => w.featured && !w.hero).slice(0, 2), [works]);
@@ -104,16 +109,30 @@ export default function Home() {
             </div>
 
             <div className="space-y-6">
-              {heroWorks.map((work) => (
-                <FeaturedWork key={work.id} work={work} />
-              ))}
+              {heroWorks.map((work) => {
+                const isPhoto = work.hasPhoto && !work.videoUrl;
+                return (
+                  <FeaturedWork
+                    key={work.id}
+                    work={work}
+                    onClick={isPhoto ? setSelectedWork : undefined}
+                  />
+                );
+              })}
             </div>
 
             {featuredWorks.length > 0 && (
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featuredWorks.map((work) => (
-                  <FeaturedWork key={work.id} work={work} />
-                ))}
+                {featuredWorks.map((work) => {
+                  const isPhoto = work.hasPhoto && !work.videoUrl;
+                  return (
+                    <FeaturedWork
+                      key={work.id}
+                      work={work}
+                      onClick={isPhoto ? setSelectedWork : undefined}
+                    />
+                  );
+                })}
               </div>
             )}
           </div>
@@ -187,12 +206,17 @@ export default function Home() {
                   className="animate-fade-in"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <WorkCard work={work} from="works" />
+                  <WorkCard work={work} from="works" onClick={setSelectedWork} />
                 </div>
               ))}
             </div>
           </div>
         </section>
+      )}
+
+      {/* 照片弹窗 */}
+      {selectedWork && (
+        <PhotoModal work={selectedWork} onClose={() => setSelectedWork(null)} />
       )}
     </>
   );

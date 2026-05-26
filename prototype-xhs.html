@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小红书风格 · 左右分栏弹窗原型</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+    background: #f2f1f0;
+  }
+
+  /* ============================================================
+     全屏弹窗遮罩
+     ============================================================ */
+  .overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ============================================================
+     弹窗主体 — 左右分栏
+     ============================================================ */
+  .modal {
+    display: flex;
+    width: 92vw; max-width: 1200px;
+    height: 88vh; max-height: 800px;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  /* ============================================================
+     左面板 — 图片轮播区
+     ============================================================ */
+  .left-panel {
+    flex: 0 0 56%;
+    position: relative;
+    background: #1a1a1a;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .carousel-track {
+    display: flex;
+    width: 100%; height: 100%;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+  }
+
+  .carousel-slide {
+    flex: 0 0 100%;
+    height: 100%;
+  }
+  .carousel-slide img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  /* 导航箭头 */
+  .nav-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.25s, background 0.2s;
+    z-index: 2;
+    font-family: inherit; line-height: 1;
+  }
+  .left-panel:hover .nav-arrow { opacity: 1; }
+  .nav-arrow:hover { background: rgba(255,255,255,0.3); }
+  .nav-arrow.prev { left: 16px; }
+  .nav-arrow.next { right: 16px; }
+  .nav-arrow:disabled { opacity: 0.2; cursor: default; }
+
+  /* 圆点指示器 */
+  .dots {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 2;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .dot.active { background: #fff; transform: scale(1.5); }
+
+  /* 图片计数器 */
+  .image-counter {
+    position: absolute; top: 16px; left: 16px;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    font-size: 11px; color: #fff;
+    font-variant-numeric: tabular-nums;
+    z-index: 2;
+  }
+
+  /* ============================================================
+     右面板 — 文字描述区
+     ============================================================ */
+  .right-panel {
+    flex: 1;
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: #e0ddd8 transparent;
+  }
+  .right-panel::-webkit-scrollbar { width: 4px; }
+  .right-panel::-webkit-scrollbar-thumb { background: #e0ddd8; border-radius: 2px; }
+
+  .right-content {
+    padding: 32px 36px 40px;
+  }
+
+  /* 作者栏 */
+  .author-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .author-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a1a1a, #444);
+    display: flex; align-items: center; justify-content: center;
+    color: #c49a2c; font-size: 15px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .author-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .author-badge {
+    font-size: 11px; color: #999;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .author-badge .sep-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+
+  /* 标题 */
+  .work-title {
+    font-family: "PingFang SC", "Noto Serif SC", "Songti SC", serif;
+    font-size: 26px; font-weight: 700; line-height: 1.3;
+    color: #1a1a1a; margin-bottom: 4px;
+  }
+  .work-subtitle { font-size: 14px; color: #999; margin-bottom: 14px; }
+
+  /* 元信息行 */
+  .meta-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    font-size: 12px; color: #b0b0b0;
+    margin-bottom: 24px;
+  }
+  .meta-row .meta-sep { color: #ddd; }
+
+  /* 正文描述 */
+  .description {
+    font-size: 14.5px; line-height: 1.9;
+    color: #333; margin-bottom: 24px;
+  }
+  .description p { margin-bottom: 10px; }
+  .description p:last-child { margin-bottom: 0; }
+
+  /* 组图缩略图导航 */
+  .thumb-strip {
+    display: flex; gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .thumb-strip::-webkit-scrollbar { display: none; }
+  .thumb-item {
+    flex-shrink: 0; width: 72px; height: 56px;
+    border-radius: 8px; overflow: hidden;
+    cursor: pointer; border: 2px solid transparent;
+    transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+  .thumb-item.active { border-color: #c49a2c; opacity: 1; }
+  .thumb-item img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  /* 金色分隔线 */
+  .gold-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 auto 20px;
+    max-width: 220px;
+  }
+  .gold-divider .div-line { flex: 1; height: 1px; background: #e8e5e0; }
+  .gold-divider .div-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #c49a2c; opacity: 0.6;
+  }
+
+  /* EXIF */
+  .exif-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 20px;
+  }
+  .exif-badge {
+    padding: 4px 10px; background: #f8f7f6;
+    border-radius: 20px;
+    font-size: 11px; color: #888;
+    font-family: "SF Mono", "Menlo", monospace;
+  }
+  .exif-badge .val { color: #555; font-weight: 500; }
+
+  /* 标签 */
+  .tags-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .tag {
+    font-size: 13px; color: #3b5998;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .tag:hover { color: #fe2c55; }
+  .tag::before { content: '#'; color: #bbb; }
+
+  /* 制作名单 */
+  .credits-block {
+    border-top: 1px solid #f0efed;
+    padding-top: 20px;
+  }
+  .credits-label {
+    font-size: 12px; font-weight: 600; color: #999;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .credits-label .gold-line {
+    width: 20px; height: 2px; background: #c49a2c;
+    border-radius: 1px; opacity: 0.4;
+  }
+  .credit-item {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 4px 0; font-size: 12.5px;
+  }
+  .credit-role { color: #bbb; min-width: 70px; flex-shrink: 0; font-size: 11px; }
+  .credit-name { color: #555; font-weight: 500; }
+
+  /* ============================================================
+     关闭按钮
+     ============================================================ */
+  .close-btn {
+    position: absolute; top: 16px; right: 16px; z-index: 10;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 16px; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: inherit; line-height: 1;
+  }
+  .close-btn:hover { background: rgba(0,0,0,0.7); }
+
+  /* ============================================================
+     响应式 — 移动端（上下布局）
+     ============================================================ */
+  @media (max-width: 768px) {
+    .modal {
+      flex-direction: column;
+      width: 100vw; height: 100vh;
+      max-width: none; max-height: none;
+      border-radius: 0;
+    }
+    .left-panel { flex: 0 0 50vh; }
+    .right-panel { flex: 1; }
+    .right-content { padding: 20px 20px 32px; }
+    .work-title { font-size: 21px; }
+    .nav-arrow { opacity: 1; width: 32px; height: 32px; }
+    .close-btn { top: 12px; right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 全屏弹窗 -->
+<div class="overlay">
+  <div class="modal">
+
+    <!-- 关闭 -->
+    <button class="close-btn" onclick="alert('关闭弹窗')">✕</button>
+
+    <!-- ═══════ 左面板 — 图片轮播 ═══════ -->
+    <div class="left-panel" id="leftPanel">
+
+      <!-- 计数器 -->
+      <div class="image-counter" id="imageCounter">1 / 5</div>
+
+      <!-- 轮播轨道 -->
+      <div class="carousel-track" id="carouselTrack">
+        <!-- 由 JS 动态填充 -->
+      </div>
+
+      <!-- 导航箭头 -->
+      <button class="nav-arrow prev" id="prevBtn" onclick="navigate(-1)">‹</button>
+      <button class="nav-arrow next" id="nextBtn" onclick="navigate(1)">›</button>
+
+      <!-- 圆点指示器 -->
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <!-- ═══════ 右面板 — 文字描述 ═══════ -->
+    <div class="right-panel">
+      <div class="right-content">
+
+        <!-- 作者栏 -->
+        <div class="author-row">
+          <div class="author-avatar">登</div>
+          <div>
+            <div class="author-name">登山路</div>
+            <div class="author-badge">
+              创意摄影<span class="sep-dot"></span>哈苏合作摄影师
+            </div>
+          </div>
+        </div>
+
+        <!-- 标题 -->
+        <h1 class="work-title">花间集</h1>
+        <p class="work-subtitle">四朵花的四张肖像</p>
+
+        <!-- 元信息 -->
+        <div class="meta-row">
+          <span>广州 · 华南植物园</span>
+          <span class="meta-sep">|</span>
+          <span>2025年8月</span>
+          <span class="meta-sep">|</span>
+          <span>哈苏 X2D + 120mm Macro</span>
+        </div>
+
+        <!-- 正文 -->
+        <div class="description">
+          <p>把镜头凑近一点，再近一点。你会发现一朵花就是一个宇宙——它有结构、有纹理、有它自己的晨昏。</p>
+          <p>Robert Mapplethorpe的花卉系列是我这次拍摄的起点。他用拍人的方式拍花——同样的光线、同样的构图、同样的尊重。我想用哈苏中画幅的解析力，把四朵不同的花拍成四幅不同的肖像。</p>
+          <p>每朵花都有自己的性格：白玫瑰的温柔、向日葵的热烈、绣球的清冷、狗尾草的倔强。它们不说话，但每一片花瓣都在讲故事。</p>
+        </div>
+
+        <!-- 组图缩略图 -->
+        <div class="thumb-strip" id="thumbStrip">
+          <!-- 由 JS 动态填充 -->
+        </div>
+
+        <!-- 金色分隔线 -->
+        <div class="gold-divider">
+          <div class="div-line"></div>
+          <div class="div-dot"></div>
+          <div class="div-line"></div>
+        </div>
+
+        <!-- EXIF -->
+        <div class="exif-row">
+          <span class="exif-badge">相机 <span class="val">X2D 100C</span></span>
+          <span class="exif-badge">镜头 <span class="val">120mm F4 Macro</span></span>
+          <span class="exif-badge">光圈 <span class="val">f/5.6</span></span>
+          <span class="exif-badge">快门 <span class="val">1/500</span></span>
+          <span class="exif-badge">ISO <span class="val">400</span></span>
+        </div>
+
+        <!-- 标签 -->
+        <div class="tags-row">
+          <span class="tag">微距</span>
+          <span class="tag">自然</span>
+          <span class="tag">光影</span>
+          <span class="tag">花卉摄影</span>
+          <span class="tag">中画幅</span>
+        </div>
+
+        <!-- 制作名单 -->
+        <div class="credits-block">
+          <div class="credits-label">
+            <span class="gold-line"></span>制作名单<span class="gold-line"></span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-role">摄影·后期</span>
+            <span class="credit-name">登山路</span>
+          </div>
+          <div class="credit-item">
+            <span class="credit-role">灯光助理</span>
+            <span class="credit-name">陈明</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── 图片数据 ──
+const images = [
+  { src: './images/photo-cover-flowers.webp', thumb: './images/photo-cover-flowers.webp', label: '封面' },
+  { src: './images/photo-still-flowers-1.webp', thumb: './images/photo-still-flowers-1.webp', label: '晨光·白玫瑰' },
+  { src: './images/photo-still-flowers-2.webp', thumb: './images/photo-still-flowers-2.webp', label: '正午·向日葵' },
+  { src: './images/photo-still-flowers-3.webp', thumb: './images/photo-still-flowers-3.webp', label: '雨后·蓝色绣球' },
+  { src: './images/photo-still-flowers-4.webp', thumb: './images/photo-still-flowers-4.webp', label: '逆光·金色狗尾草' },
+];
+
+let currentIndex = 0;
+const total = images.length;
+
+// ── 初始化 ──
+function init() {
+  const track = document.getElementById('carouselTrack');
+  const dotsEl = document.getElementById('dots');
+  const thumbEl = document.getElementById('thumbStrip');
+
+  // 轮播 slides
+  track.innerHTML = images.map((img, i) =>
+    `<div class="carousel-slide"><img src="${img.src}" alt="${img.label}" draggable="false" /></div>`
+  ).join('');
+
+  // 圆点
+  dotsEl.innerHTML = images.map((_, i) =>
+    `<div class="dot${i === 0 ? ' active' : ''}" onclick="goTo(${i})"></div>`
+  ).join('');
+
+  // 缩略图
+  thumbEl.innerHTML = images.map((img, i) =>
+    `<div class="thumb-item${i === 0 ? ' active' : ''}" onclick="goTo(${i})"><img src="${img.thumb}" alt="${img.label}" /></div>`
+  ).join('');
+
+  updateUI();
+}
+
+// ── 导航 ──
+function navigate(dir) {
+  goTo(currentIndex + dir);
+}
+
+function goTo(index) {
+  if (index < 0 || index >= total) return;
+  currentIndex = index;
+  updateUI();
+}
+
+function updateUI() {
+  // 轨道位移
+  const track = document.getElementById('carouselTrack');
+  track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+  // 计数器
+  document.getElementById('imageCounter').textContent = `${currentIndex + 1} / ${total}`;
+
+  // 圆点
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === currentIndex);
+  });
+
+  // 缩略图
+  document.querySelectorAll('.thumb-item').forEach((t, i) => {
+    t.classList.toggle('active', i === currentIndex);
+  });
+
+  // 箭头状态
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex === total - 1;
+}
+
+// ── 触摸滑动 ──
+(function() {
+  const panel = document.getElementById('leftPanel');
+  let startX = 0, dragging = false;
+
+  panel.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    dragging = true;
+  }, { passive: true });
+
+  panel.addEventListener('touchend', e => {
+    if (!dragging) return;
+    dragging = false;
+    const diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? -1 : 1);
+    }
+  });
+})();
+
+// ── 键盘 ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+  if (e.key === 'Escape') alert('关闭弹窗');
+});
+
+init();
+</script>
+
+</body>
+</html>
