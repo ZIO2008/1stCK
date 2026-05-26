@@ -14,7 +14,6 @@ export default function WorkDetail() {
   const work = works.find((w) => w.id === id);
 
   const fromParam = new URLSearchParams(location.search).get('from');
-  const isPhotoView = fromParam === 'works';
 
   if (!work) {
     return (
@@ -29,7 +28,11 @@ export default function WorkDetail() {
     );
   }
 
-  if (isPhotoView) {
+  // 布局由作品自身属性决定，不依赖 ?from 参数
+  // 纯照片作品（无视频链接）→ PhotoLayout；有视频的作品 → VideoLayout
+  const isPhotoOnly = work.hasPhoto && !work.videoUrl;
+
+  if (isPhotoOnly) {
     return <PhotoLayout work={work} works={works} />;
   }
   return <VideoLayout work={work} works={works} />;

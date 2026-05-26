@@ -4,18 +4,23 @@ import { WORK_TYPE_MAP } from '@/types';
 
 interface FeaturedWorkProps {
   work: Work;
+  /** 来源标识（用于返回导航），自动推断 */
+  from?: string;
 }
 
 /**
  * 首页精选作品 —— 大图 + 标题 + 一行描述
  * 极度克制，不展示标签/类型/时长
  */
-export default function FeaturedWork({ work }: FeaturedWorkProps) {
+export default function FeaturedWork({ work, from }: FeaturedWorkProps) {
   const typeColor = WORK_TYPE_MAP[work.type].color;
+  const isPhoto = work.hasPhoto && !work.videoUrl;
+  const linkFrom = from || (isPhoto ? 'works' : 'video');
+  const linkTo = `/work/${work.id}?from=${linkFrom}`;
 
   return (
     <Link
-      to={`/work/${work.id}`}
+      to={linkTo}
       className="group block relative overflow-hidden rounded-2xl animate-fade-in"
     >
       <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden">

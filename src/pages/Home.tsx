@@ -148,7 +148,7 @@ export default function Home() {
                   className="animate-fade-in"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
-                  <WorkCard work={work} />
+                  <WorkCard work={work} from="video" />
                 </div>
               ))}
             </div>
