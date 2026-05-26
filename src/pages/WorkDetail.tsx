@@ -178,9 +178,7 @@ export default function WorkDetail() {
 
 /* ======== 照片专用布局组件 ======== */
 function PhotoLayout({ work, works }: { work: ReturnType<typeof useWorks>['works'][number]; works: ReturnType<typeof useWorks>['works'] }) {
-  const [selectedStill, setSelectedStill] = useState(
-    work.stills && work.stills.length > 0 ? work.stills[0] : work.coverImage
-  );
+  const [selectedStill, setSelectedStill] = useState<string>('');
   const typeInfo = WORK_TYPE_MAP[work.type];
   const relatedWorks = works
     .filter((w) => w.id !== work.id && w.hasPhoto)
@@ -209,43 +207,49 @@ function PhotoLayout({ work, works }: { work: ReturnType<typeof useWorks>['works
         </div>
       </section>
 
-      {/* ======== 组图缩略导航 ======== */}
+      {/* ======== 组图瀑布流 ======== */}
       {work.isGroup && work.stills && work.stills.length > 0 && (
-        <section className="bg-mist-900">
-          {/* 选中大图 */}
-          <div className="max-w-[1200px] mx-auto">
-            <div className="relative aspect-[16/9] overflow-hidden">
-              <img
-                src={selectedStill}
-                alt={`${work.title}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          {/* 缩略图导航条 */}
-          <div className="border-t border-white/10 py-4">
-            <div className="max-w-[1200px] mx-auto px-6 flex gap-3 overflow-x-auto">
+        <section className="py-12 md:py-16">
+          <div className="max-w-[1400px] mx-auto px-4 md:px-6">
+            <h2 className="font-serif text-xl font-bold text-mist-900 mb-8">组图</h2>
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
               {work.stills.map((still, i) => (
-                <button
+                <div
                   key={i}
+                  className="break-inside-avoid rounded-xl overflow-hidden cursor-pointer group"
                   onClick={() => setSelectedStill(still)}
-                  className={cn(
-                    'shrink-0 w-24 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200',
-                    selectedStill === still
-                      ? 'border-white scale-105'
-                      : 'border-transparent opacity-50 hover:opacity-80'
-                  )}
                 >
                   <img
                     src={still}
                     alt={`${work.title} ${i + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]"
+                    loading={i > 2 ? 'lazy' : 'eager'}
                   />
-                </button>
+                </div>
               ))}
             </div>
           </div>
+
+          {/* 全屏灯箱 */}
+          {selectedStill && (
+            <div
+              className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
+              onClick={() => setSelectedStill('')}
+            >
+              <button
+                className="absolute top-6 right-6 text-white/60 hover:text-white text-2xl font-light leading-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors z-10"
+                aria-label="关闭"
+              >
+                ✕
+              </button>
+              <img
+                src={selectedStill}
+                alt={work.title}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
         </section>
       )}
 
