@@ -40,7 +40,7 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              'url(./images/bg-hero.png)',
+              'url(./images/bg-hero.webp)',
           }}
         />
         {/* 暗色渐变叠加 */}
